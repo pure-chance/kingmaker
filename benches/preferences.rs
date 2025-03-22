@@ -20,6 +20,19 @@ pub fn preference_benchmarks(c: &mut Criterion) {
                 impartial.sample(&candidate_pool, VOTER_COUNT, &mut rng);
         })
     });
+
+    group.bench_function("manual", |b| {
+        b.iter(|| {
+            let ballots: Profile<Ordinal> = vec![
+                Ordinal(vec![0, 1, 2]),
+                Ordinal(vec![1, 0, 2]),
+                Ordinal(vec![2, 0, 1]),
+            ]
+            .into();
+            let manual = Manual::new(ballots);
+            let _ballots: Profile<Ordinal> = manual.sample(&candidate_pool, VOTER_COUNT, &mut rng);
+        })
+    });
 }
 
 criterion_group! {
