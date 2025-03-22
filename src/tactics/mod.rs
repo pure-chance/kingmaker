@@ -1,15 +1,18 @@
 // modules
+mod burial;
 mod compromise;
 mod identity;
 
 // re-exports
+
+pub use burial::Burial;
 pub use compromise::Compromise;
 pub use identity::Identity;
 
 #[cfg(test)]
 mod tests {
     use crate::prelude::{
-        tactics::{Compromise, Identity},
+        tactics::{Burial, Compromise, Identity},
         *,
     };
     use std::collections::BTreeSet;
@@ -26,5 +29,12 @@ mod tests {
         let compromise = Compromise(vec![2]);
         let ordinal = Ordinal(vec![0, 2, 1]);
         assert_eq!(compromise.apply(ordinal), Ordinal(vec![2, 0, 1]))
+    }
+
+    #[test]
+    fn test_burial() {
+        let burial = Burial(vec![2]);
+        let ordinal = Ordinal(vec![0, 2, 1]);
+        assert_eq!(burial.apply(ordinal), Ordinal(vec![0, 1, 2]))
     }
 }
