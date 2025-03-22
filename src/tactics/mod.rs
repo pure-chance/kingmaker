@@ -2,17 +2,18 @@
 mod burial;
 mod compromise;
 mod identity;
+mod pushover;
 
 // re-exports
-
 pub use burial::Burial;
 pub use compromise::Compromise;
 pub use identity::Identity;
+pub use pushover::Pushover;
 
 #[cfg(test)]
 mod tests {
     use crate::prelude::{
-        tactics::{Burial, Compromise, Identity},
+        tactics::{Burial, Compromise, Identity, Pushover},
         *,
     };
     use std::collections::BTreeSet;
@@ -36,5 +37,12 @@ mod tests {
         let burial = Burial(vec![2]);
         let ordinal = Ordinal(vec![0, 2, 1]);
         assert_eq!(burial.apply(ordinal), Ordinal(vec![0, 1, 2]))
+    }
+
+    #[test]
+    fn test_pushover() {
+        let pushover = Pushover(vec![0], vec![2]);
+        let ordinal = Ordinal(vec![0, 1, 2]);
+        assert_eq!(pushover.apply(ordinal), Ordinal(vec![0, 2, 1]))
     }
 }
