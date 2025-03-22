@@ -6,8 +6,7 @@ use crate::core::Id;
 
 /// A candidate in an election.
 ///
-/// Each candidate has a name and (optionally) a party that they are associated
-/// with.
+/// Each candidate has an id, name, (optional) party, and (optional) list of positions.
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize)]
 pub struct Candidate {
     /// Unique identifier for the candidate

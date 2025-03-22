@@ -7,6 +7,9 @@ use rand::rngs::StdRng;
 
 use super::{Ballot, Profile};
 
+/// A strategy is a distribution over tactics.
+///
+/// When a voter applies a strategy, they will randomly draw a tactic from the distribution (according to the weights), and apply it to their ballot.
 #[derive(Debug, Clone)]
 pub struct Strategy<B: Ballot> {
     tactics: Vec<(Arc<dyn Tactic<B>>, f32)>,

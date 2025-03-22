@@ -6,10 +6,12 @@ use serde::Serialize;
 
 use super::{Candidate, Id};
 
+/// The outcome of an election (single-winner or multi-winner)
 pub trait Outcome: Send + Sync + Serialize + Debug + Display + Eq {
     fn winners(&self) -> Vec<&str>;
 }
 impl Outcome for SingleWinner {
+    /// Get the winners of the single-winner election
     fn winners(&self) -> Vec<&str> {
         match self {
             SingleWinner::Win(candidate) => vec![candidate.name()],
@@ -19,6 +21,7 @@ impl Outcome for SingleWinner {
     }
 }
 impl Outcome for MultiWinner {
+    /// Get the winners of the multi-winner election
     fn winners(&self) -> Vec<&str> {
         match self {
             MultiWinner::Elected(candidates) => candidates.iter().map(|c| c.name()).collect(),
@@ -38,6 +41,7 @@ pub enum SingleWinner {
     None,
 }
 impl SingleWinner {
+    /// Construct a `SingleWinner::Win()`
     pub fn win(candidate_pool: &[Candidate], id: Id) -> Self {
         SingleWinner::Win(
             candidate_pool
@@ -47,6 +51,7 @@ impl SingleWinner {
                 .to_owned(),
         )
     }
+    /// Construct a `SingleWinner::Tie()`
     pub fn tie(candidate_pool: &[Candidate], ids: &[Id]) -> Self {
         SingleWinner::Tie(
             ids.iter()
@@ -60,18 +65,23 @@ impl SingleWinner {
                 .collect(),
         )
     }
+    /// Construct a `SingleWinner::None()`
     pub fn none() -> Self {
         SingleWinner::None
     }
 }
 
+/// The outcome of a multi-winner election
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize)]
 pub enum MultiWinner {
+    /// The elected candidates
     Elected(BTreeSet<Candidate>),
+    /// None of the candidates were elected
     None,
 }
 
 impl MultiWinner {
+    /// Construct a `MultiWinner::Elected()`
     pub fn seats(candidate_pool: &[Candidate], ids: &[Id]) -> Self {
         MultiWinner::Elected(
             ids.iter()
@@ -85,6 +95,7 @@ impl MultiWinner {
                 .collect(),
         )
     }
+    /// Construct a `MultiWinner::None()`
     pub fn none() -> Self {
         MultiWinner::None
     }

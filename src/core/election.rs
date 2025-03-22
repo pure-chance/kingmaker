@@ -4,7 +4,7 @@ use serde_json::json;
 
 use super::{Ballot, Candidate, Id, Method, Outcome, Preference, Profile, Strategy, VotingBlock};
 
-/// An election configuration. This configures the details of the election to simulate, and runs the election. ...TODO
+/// An election is a simulation of the voting process. It is constructed with a set of conditions, a set of candidates, a pool of voters, and a method for determining the winner.
 #[derive(Debug)]
 pub struct Election<B, C, M>
 where
@@ -137,6 +137,7 @@ where
     }
 }
 
+/// Constructs an election with the given conditions and method.
 pub struct ElectionBuilder<B, C, M>
 where
     B: Ballot,
