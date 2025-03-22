@@ -1,9 +1,9 @@
 use criterion::{criterion_group, criterion_main, Criterion};
-use kingmaker::prelude::{preferences::*, *};
+use kingmaker::prelude::{methods::*, preferences::*, tactics::*, *};
 use rand::{rngs::StdRng, SeedableRng};
 
 pub fn tactics_benchmarks(c: &mut Criterion) {
-    let mut _group = c.benchmark_group("tactics");
+    let mut group = c.benchmark_group("tactics");
     const VOTER_COUNT: usize = 1000;
 
     let candidate_pool = vec![
@@ -19,6 +19,17 @@ pub fn tactics_benchmarks(c: &mut Criterion) {
         impartial.sample(&candidate_pool, VOTER_COUNT, &mut rng);
     let _cardinal_ballots: Profile<Cardinal> =
         impartial.sample(&candidate_pool, VOTER_COUNT, &mut rng);
+
+    group.bench_function("identity", |b| {
+        b.iter(|| {
+            let _strategic_ballots: Profile<<Plurality as Method>::Ballot> = ordinal_ballots
+                .clone()
+                .into_iter()
+                .map(|ballot| Identity.apply(ballot))
+                .collect::<Vec<_>>()
+                .into();
+        })
+    });
 }
 
 criterion_group! {

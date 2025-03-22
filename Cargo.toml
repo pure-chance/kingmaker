@@ -42,3 +42,8 @@ path = "src/main.rs"
 name = "preference"
 path = "benches/preferences.rs"
 harness = false
+
+[[bench]]
+name = "tactics"
+path = "benches/tactics.rs"
+harness = false
