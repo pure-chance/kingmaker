@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use crate::core::*;
 
-///...TODO!
+/// A single-winner, ranked voting method. The candidate with the fewest votes is eliminated in each round, and votes for the eliminated candidate are redistributed to the next preference. This process continues until one candidate has a majority.
 #[derive(Debug)]
 pub struct IRV;
 

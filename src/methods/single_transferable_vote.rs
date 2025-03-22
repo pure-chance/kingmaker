@@ -2,6 +2,7 @@ use std::collections::{HashMap, HashSet};
 
 use crate::core::*;
 
+/// A multi-winner, ranked voting method. Candidates with the fewest votes are eliminated in each round, and their votes are transferred to the next preference. This process continues until candidates achieve a required quota or all positions are filled.
 #[derive(Debug)]
 pub struct STV {
     seats: usize,

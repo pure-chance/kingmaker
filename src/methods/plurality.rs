@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use crate::core::*;
 
-/// Plurality, or First-Past-The-Post is a method of voting where the candidate with the most votes (a plurality) wins. If the two or more candidates have the maximum # of votes, then there is a tie.
+/// A single-winner, ranked voting method. The candidate with the most votes (a plurality) wins.
 #[derive(Debug)]
 pub struct Plurality;
 

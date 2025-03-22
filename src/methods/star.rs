@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use crate::core::*;
 
-/// ...TODO
+/// A single-winner, cardinal voting method. The two candidates with the highest scores advance to a runoff, where the candidate with the most votes in the runoff wins.
 #[derive(Debug)]
 pub struct Star;
 

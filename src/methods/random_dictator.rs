@@ -1,6 +1,6 @@
 use crate::core::*;
 
-/// Selects a random ballot and returns the winner(s) of that ballot. That ballot is the only ballot that matters, hence the title `random dictator`.
+/// A single-winner ranked voting method. The winner is determined by selecting a random ballot and returning the winner(s) of that ballot. That ballot is the only ballot that matters, hence the title "random dictator".
 #[derive(Debug)]
 pub struct RandomDictator;
 

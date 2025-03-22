@@ -2,11 +2,7 @@ use std::collections::HashMap;
 
 use crate::core::*;
 
-/// Borda count is a method of ranking elections in which each voter ranks the
-/// candidates in order of preference. Each rank is given a value corresponding
-/// to its order. With n candidates, 1st is n-1, 2nd is n-2, and so on, with
-/// last having a value of 0. The candidate whose sum of ranks is highest is
-/// the winner.
+/// A single-winner, ranked voting method. Each rank (in the ballot) is given a value corresponding to its order. With n candidates, 1st is `n-1`, 2nd is `n-2`, and so on, with last having a value of `0`. The candidate whose sum of ranks is highest is the winner.
 #[derive(Debug)]
 pub struct Borda;
 

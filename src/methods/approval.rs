@@ -2,9 +2,7 @@ use std::collections::HashMap;
 
 use crate::core::*;
 
-/// Approval voting is a method of voting in which each voter approves of some
-/// subset of the candidates. The winner is the candidate(s) with the most
-/// approvals.
+/// A single-winner, nominal voting method. The winner is the candidate(s) with the most approvals.
 #[derive(Debug)]
 pub struct Approval;
 
