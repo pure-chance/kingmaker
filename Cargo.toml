@@ -47,3 +47,8 @@ harness = false
 name = "tactics"
 path = "benches/tactics.rs"
 harness = false
+
+[[bench]]
+name = "methods"
+path = "benches/methods.rs"
+harness = false
