@@ -1,7 +1,25 @@
 use crate::core::*;
 use rand::{rngs::StdRng, Rng};
 
-/// A preference that is uniform across all realizations. There is an equal likelihood of choosing any of the possible ballots.
+/// The `Impartial` preference model generates rankings by assuming that all possible rankings are equally likely, leading to a uniform random distribution over all permutations.
+///
+/// # Probability Distribution
+///
+/// Given `n` candidates, each possible ranking `(c_1, c_2, ..., c_n)` is selected with equal probability:
+///
+/// ```text
+/// P(c_1, c_2, ..., c_n) = 1 / n!
+/// ```
+///
+/// where:
+/// - `n!` is the total number of possible rankings (permutations of `n` candidates).
+/// - Every ranking is equally likely, ensuring no inherent bias.
+///
+/// # Interpretation
+///
+/// - The `Impartial` model represents a completely neutral preference structure.
+/// - It is often used as a baseline for analyzing voting systems.
+/// - As `n` increases, the number of possible rankings grows factorially, making exhaustive enumeration infeasible for large values of `n`.
 #[derive(Debug, Clone)]
 pub struct Impartial;
 

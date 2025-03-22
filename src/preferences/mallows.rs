@@ -1,7 +1,26 @@
 use crate::core::*;
 use rand::{distr::weighted::WeightedIndex, prelude::*, rngs::StdRng};
 
-/// TODO...
+/// The Mallows model is a probabilistic model for generating preference rankings by sampling permutations at varying distances from a central reference permutation `pi_0`. The deviation from `pi_0` is controlled by a dispersion parameter `phi`.
+///
+/// # Probability Distribution
+///
+/// A permutation `pi` is sampled with probability proportional to:
+///
+/// ```math
+/// P(pi) = I(n, d) * exp(-phi * d)
+/// ```
+///
+/// where:
+/// - `d` is the distance between `pi` and the central permutation `pi_0`.
+/// - `I(n, d)` is the number of permutations at distance `d` from `pi_0`.
+/// - `phi` is a dispersion parameter that controls concentration around `pi_0`.
+///
+/// # Interpretation of `phi`
+///
+/// - `phi = 0`: The distribution is uniform over all permutations.
+/// - `phi > 0`: Higher probability is assigned to permutations closer to `pi_0`.
+/// - Larger `phi` values result in stronger adherence to `pi_0`, while smaller values allow for more variation.
 #[derive(Debug, Clone)]
 pub struct Mallows {
     pi_0: Vec<Id>,
