@@ -2,9 +2,9 @@ use criterion::{criterion_group, criterion_main, Criterion};
 use kingmaker::prelude::*;
 
 pub fn election_benchmarks(c: &mut Criterion) {
-    let mut _group = c.benchmark_group("election");
+    let mut group = c.benchmark_group("election");
 
-    fn _election_setup() -> Election<Ordinal, (), methods::Plurality> {
+    fn election_setup() -> Election<Ordinal, (), methods::Plurality> {
         Election::builder((), methods::Plurality)
             .add_candidate(0, "A", Some("DEM"), None)
             .add_candidate(1, "B", Some("REP"), None)
@@ -16,6 +16,20 @@ pub fn election_benchmarks(c: &mut Criterion) {
             )
             .build()
     }
+
+    group.bench_function("single election", |b| {
+        b.iter(|| {
+            let election = election_setup();
+            let _outcome = election.run_once(0);
+        })
+    });
+
+    group.bench_function("multiple elections", |b| {
+        b.iter(|| {
+            let election = election_setup();
+            let _outcomes = election.run_many(100, 0);
+        })
+    });
 }
 
 criterion_group! {
