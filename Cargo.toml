@@ -1,0 +1,18 @@
+[package]
+name = "kingmaker"
+version = "0.0.0"
+edition = "2021"
+authors = ["Chance Addis <chance.h.addis@proton.me>"]
+description = "A modular, performant, social choice framework for the simulation, computation, and analysis of strategic voting."
+keywords = [
+    "voting",
+    "social choice",
+    "strategic voting",
+    "computational social choice",
+    "game theory",
+]
+readme = "README.md"
+license = "Apache-2.0 OR MIT"
+repository = "https://github.com/Approximately-Equal/Kingmaker"
+
+[dependencies]
