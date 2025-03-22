@@ -1,17 +1,25 @@
 use criterion::{criterion_group, criterion_main, Criterion};
-use kingmaker::prelude::*;
+use kingmaker::prelude::{preferences::*, *};
 use rand::{rngs::StdRng, SeedableRng};
 
 pub fn preference_benchmarks(c: &mut Criterion) {
-    let mut _group = c.benchmark_group("preferences");
-    const _VOTER_COUNT: usize = 1_000;
+    let mut group = c.benchmark_group("preferences");
+    const VOTER_COUNT: usize = 1_000;
 
-    let _candidate_pool = vec![
+    let candidate_pool = vec![
         Candidate::new(0, "A", Some("DEM"), None),
         Candidate::new(1, "B", Some("REP"), None),
         Candidate::new(2, "C", None, None),
     ];
-    let mut _rng = StdRng::seed_from_u64(0);
+    let mut rng = StdRng::seed_from_u64(0);
+
+    group.bench_function("impartial", |b| {
+        b.iter(|| {
+            let impartial = Impartial;
+            let _ballots: Profile<Cardinal> =
+                impartial.sample(&candidate_pool, VOTER_COUNT, &mut rng);
+        })
+    });
 }
 
 criterion_group! {

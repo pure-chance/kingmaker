@@ -37,3 +37,8 @@ path = "src/lib.rs"
 [[bin]]
 name = "kingmaker"
 path = "src/main.rs"
+
+[[bench]]
+name = "preference"
+path = "benches/preferences.rs"
+harness = false
