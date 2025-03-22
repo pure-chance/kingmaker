@@ -10,10 +10,12 @@ and much more.
 
 ## Installation
 
-Kingmaker is currently in pre-release and not yet available on `crates.io`. You can build from source using Cargo:
+Kingmaker is currently in pre-release and not yet available on `crates.io`. You can build from source using `cargo`:
 
 ```sh
-cargo install kingmaker
+git clone https://github.com/Approximately-Equal/kingmaker.git
+cd kingmaker
+cargo run --release
 ```
 
 ## Getting Started
@@ -54,4 +56,4 @@ fn main() {
 ## Acknowledgments
 
 - Much thanks to the folks at [pref_voting](https://github.com/voting-tools/pref_voting) for their comprehensive work on social choice research.
-- I'd also like to thank my advisor, Michael Pearce, for his guidance and support.
+- I'd also like to thank my advisor Michael Pearce for his guidance and support.
