@@ -1,10 +1,9 @@
-// modules
+//! A collection of `tactics` that can be used to represent the tactics (and thus strategies) of voters in an election.
 mod burial;
 mod compromise;
 mod identity;
 mod pushover;
 
-// re-exports
 pub use burial::Burial;
 pub use compromise::Compromise;
 pub use identity::Identity;

@@ -1,3 +1,4 @@
+//! The core components of Kingmaker.
 mod ballot;
 mod candidate;
 mod election;

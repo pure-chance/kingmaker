@@ -1,10 +1,9 @@
-// modules
+//! A collection of `preferences` that can be used to represent the preferences of voters in an election.
 mod impartial;
 mod mallows;
 mod manual;
 mod plackett_luce;
 
-// re-exports
 pub use impartial::Impartial;
 pub use mallows::Mallows;
 pub use manual::Manual;

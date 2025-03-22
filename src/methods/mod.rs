@@ -1,4 +1,4 @@
-// modules
+//! A collection of `methods` that can be used to tabulate the results of an election.
 mod approval;
 mod borda;
 mod instant_runoff;
@@ -7,7 +7,6 @@ mod random_dictator;
 mod single_transferable_vote;
 mod star;
 
-// re-exports
 pub use approval::Approval;
 pub use borda::Borda;
 pub use instant_runoff::IRV;
