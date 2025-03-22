@@ -1,15 +1,17 @@
 // modules
+mod approval;
 mod plurality;
 mod random_dictator;
 
 // re-exports
+pub use approval::Approval;
 pub use plurality::Plurality;
 pub use random_dictator::RandomDictator;
 
 #[cfg(test)]
 mod tests {
     use crate::prelude::{
-        methods::{Plurality, RandomDictator},
+        methods::{Approval, Plurality, RandomDictator},
         *,
     };
     use std::collections::{BTreeMap, BTreeSet};
@@ -69,5 +71,13 @@ mod tests {
         let ballots = ordinal_ballots();
         let outcome = Plurality.outcome(&candidate_pool, &ballots);
         assert_eq!(outcome, SingleWinner::tie(&candidate_pool, &[0, 2]));
+    }
+
+    #[test]
+    fn approval_outcome() {
+        let candidate_pool = candidate_pool();
+        let ballots = nominal_ballots();
+        let outcome = Approval.outcome(&candidate_pool, &ballots);
+        assert_eq!(outcome, SingleWinner::win(&candidate_pool, 1));
     }
 }

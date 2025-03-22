@@ -31,6 +31,12 @@ pub fn method_benchmarks(c: &mut Criterion) {
             let _outcome = Plurality.outcome(&candidate_pool, &ordinal_ballots);
         })
     });
+
+    group.bench_function("approval", |b| {
+        b.iter(|| {
+            let _outcome = Approval.outcome(&candidate_pool, &nominal_ballots);
+        })
+    });
 }
 
 criterion_group! {
