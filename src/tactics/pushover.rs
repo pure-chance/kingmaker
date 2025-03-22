@@ -1,6 +1,6 @@
 use crate::prelude::{Id, Ordinal, Tactic};
 
-/// The pushover tactic places pushover candidates highly, not to get them elected, but to hopefully knock out stronger candidates in early rounds of voting before losing to their true preferences. The Vec<Id> specifies the pushover candidates (in order), with the new ranking being preferred + pushover + others.
+/// The pushover tactic places pushover candidates highly, not to get them elected, but to hopefully knock out stronger candidates in early rounds of voting before losing to their true preferences. The `Vec<Id>` specifies the pushover candidates (in order), with the new ranking being `preferred + pushover + others`.
 #[derive(Debug)]
 pub struct Pushover(pub Vec<Id>, pub Vec<Id>);
 

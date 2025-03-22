@@ -1,6 +1,6 @@
 use crate::prelude::{Id, Ordinal, Tactic};
 
-/// The burial tactic buries some leading candidate to hopefully knock them out early in the methods. The Vec<Id> specifies the candidates to bury, with the new ranking being ballot (without buried candidates) + buried.
+/// The burial tactic buries some leading candidate to hopefully knock them out early in the methods. The `Vec<Id>` specifies the candidates to bury, with the new ranking being `(ballot - buried) + buried`.
 #[derive(Debug)]
 pub struct Burial(pub Vec<Id>);
 
