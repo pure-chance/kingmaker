@@ -1,12 +1,17 @@
 // modules
+mod plurality;
 mod random_dictator;
 
 // re-exports
+pub use plurality::Plurality;
 pub use random_dictator::RandomDictator;
 
 #[cfg(test)]
 mod tests {
-    use crate::prelude::{methods::RandomDictator, *};
+    use crate::prelude::{
+        methods::{Plurality, RandomDictator},
+        *,
+    };
     use std::collections::{BTreeMap, BTreeSet};
 
     fn candidate_pool() -> Vec<Candidate> {
@@ -56,5 +61,13 @@ mod tests {
         let ballots: Profile<Ordinal> = ordinal_ballots();
         let outcome = RandomDictator.outcome(&candidate_pool, &ballots);
         assert_eq!(outcome, SingleWinner::win(&candidate_pool, 0));
+    }
+
+    #[test]
+    fn plurality_outcome() {
+        let candidate_pool = candidate_pool();
+        let ballots = ordinal_ballots();
+        let outcome = Plurality.outcome(&candidate_pool, &ballots);
+        assert_eq!(outcome, SingleWinner::tie(&candidate_pool, &[0, 2]));
     }
 }

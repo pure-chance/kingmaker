@@ -25,6 +25,12 @@ pub fn method_benchmarks(c: &mut Criterion) {
             let _outcome = RandomDictator.outcome(&candidate_pool, &ordinal_ballots);
         })
     });
+
+    group.bench_function("plurality", |b| {
+        b.iter(|| {
+            let _outcome = Plurality.outcome(&candidate_pool, &ordinal_ballots);
+        })
+    });
 }
 
 criterion_group! {
