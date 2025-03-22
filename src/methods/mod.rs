@@ -118,6 +118,6 @@ mod tests {
         let candidate_pool = candidate_pool();
         let ballots = ordinal_ballots();
         let outcome = STV::new(2).outcome(&candidate_pool, &ballots);
-        assert_eq!(outcome, MultiWinner::win(&candidate_pool, &[0, 1]));
+        assert_eq!(outcome, MultiWinner::seats(&candidate_pool, &[0, 1]));
     }
 }

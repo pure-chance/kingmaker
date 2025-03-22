@@ -52,7 +52,7 @@ impl Method for STV {
             }
         }
 
-        MultiWinner(
+        MultiWinner::Elected(
             winners
                 .into_iter()
                 .filter_map(|id| candidate_pool.iter().find(|c| c.id() == id).cloned())

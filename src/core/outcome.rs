@@ -20,7 +20,10 @@ impl Outcome for SingleWinner {
 }
 impl Outcome for MultiWinner {
     fn winners(&self) -> Vec<&str> {
-        self.0.iter().map(|c| c.name()).collect()
+        match self {
+            MultiWinner::Elected(candidates) => candidates.iter().map(|c| c.name()).collect(),
+            MultiWinner::None => vec![],
+        }
     }
 }
 
@@ -63,14 +66,14 @@ impl SingleWinner {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize)]
-pub struct MultiWinner(pub BTreeSet<Candidate>);
+pub enum MultiWinner {
+    Elected(BTreeSet<Candidate>),
+    None,
+}
 
 impl MultiWinner {
-    pub fn new(candidates: Vec<Candidate>) -> Self {
-        MultiWinner(candidates.into_iter().collect())
-    }
-    pub fn win(candidate_pool: &[Candidate], ids: &[Id]) -> Self {
-        MultiWinner(
+    pub fn seats(candidate_pool: &[Candidate], ids: &[Id]) -> Self {
+        MultiWinner::Elected(
             ids.iter()
                 .map(|id| {
                     candidate_pool
@@ -81,6 +84,9 @@ impl MultiWinner {
                 })
                 .collect(),
         )
+    }
+    pub fn none() -> Self {
+        MultiWinner::None
     }
 }
 
@@ -106,14 +112,19 @@ impl Display for SingleWinner {
 
 impl Display for MultiWinner {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(
-            f,
-            "MultiWinner({})",
-            self.0
-                .iter()
-                .map(|c| c.name().to_string())
-                .collect::<Vec<_>>()
-                .join(", ")
-        )
+        match self {
+            MultiWinner::Elected(candidates) => {
+                write!(
+                    f,
+                    "MultiWinner({})",
+                    candidates
+                        .iter()
+                        .map(|c| c.name().to_string())
+                        .collect::<Vec<_>>()
+                        .join(", ")
+                )
+            }
+            MultiWinner::None => write!(f, "MultiWinner(None)"),
+        }
     }
 }
