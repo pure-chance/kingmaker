@@ -33,6 +33,14 @@ pub fn preference_benchmarks(c: &mut Criterion) {
             let _ballots: Profile<Ordinal> = manual.sample(&candidate_pool, VOTER_COUNT, &mut rng);
         })
     });
+
+    group.bench_function("plackett luce", |b| {
+        b.iter(|| {
+            let plackett_luce = PlackettLuce::new(vec![(0, 1.0), (1, 1.0), (2, 1.0)]);
+            let _ballots: Profile<Ordinal> =
+                plackett_luce.sample(&candidate_pool, VOTER_COUNT, &mut rng);
+        })
+    });
 }
 
 criterion_group! {
