@@ -14,7 +14,7 @@ impl Method for IRV {
         candidate_pool: &[Candidate],
         profile: &Profile<Self::Ballot>,
     ) -> Self::Winner {
-        let majority = (profile.len() + 1) / 2;
+        let majority = profile.len() / 2 + 1;
         let mut remaining_ranking: Vec<Self::Ballot> = profile.iter().cloned().collect();
 
         let first_place_counts = |profile: &Vec<Self::Ballot>| -> HashMap<Id, usize> {
@@ -38,6 +38,11 @@ impl Method for IRV {
                 .map(|(id, _)| *id)
                 .collect();
 
+            // if all candidates have the same number of first-place votes, then break and tie
+            if losers.len() == fpc.len() {
+                break;
+            }
+
             remaining_ranking = remaining_ranking
                 .iter_mut()
                 .filter(|b| !b.is_empty())
@@ -45,8 +50,7 @@ impl Method for IRV {
                     b.retain(|c| !losers.contains(c));
                     b.clone()
                 })
-                .collect::<Vec<_>>()
-                .into();
+                .collect::<Vec<_>>();
 
             fpc = first_place_counts(&remaining_ranking);
             max_first_place_votes = *fpc.values().max().unwrap();
