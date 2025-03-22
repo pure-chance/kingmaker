@@ -30,8 +30,8 @@ mod tests {
         let candidate_pool = candidate_pool();
         let impartial = Impartial;
         let mut rng = StdRng::seed_from_u64(0);
-        let outcome: Profile<Ordinal> = impartial.sample(&candidate_pool, 100, &mut rng);
-        assert_eq!(outcome.len(), 100);
+        let profile: Profile<Ordinal> = impartial.sample(&candidate_pool, 100, &mut rng);
+        assert_eq!(profile.len(), 100);
     }
 
     #[test]
@@ -47,8 +47,8 @@ mod tests {
         .into();
         let manual = Manual::new(profile);
         let mut rng = StdRng::seed_from_u64(0);
-        let outcome: Profile<Ordinal> = manual.sample(&candidate_pool, 100, &mut rng);
-        assert_eq!(outcome.len(), 100);
+        let profile: Profile<Ordinal> = manual.sample(&candidate_pool, 100, &mut rng);
+        assert_eq!(profile.len(), 100);
     }
 
     #[test]
@@ -57,8 +57,8 @@ mod tests {
         let weights = vec![(0, 1.0), (1, 1.1), (2, 1.0)];
         let plackett_luce = PlackettLuce::new(weights);
         let mut rng = StdRng::seed_from_u64(0);
-        let outcome: Profile<Ordinal> = plackett_luce.sample(&candidate_pool, 100, &mut rng);
-        assert_eq!(outcome.len(), 100);
+        let profile: Profile<Ordinal> = plackett_luce.sample(&candidate_pool, 100, &mut rng);
+        assert_eq!(profile.len(), 100);
     }
 
     #[test]
@@ -66,7 +66,7 @@ mod tests {
         let candidate_pool = candidate_pool();
         let mallows = Mallows::new(vec![0, 1, 2], 0.5);
         let mut rng = StdRng::seed_from_u64(0);
-        let outcome: Profile<Ordinal> = mallows.sample(&candidate_pool, 100, &mut rng);
-        assert_eq!(outcome.len(), 100);
+        let profile: Profile<Ordinal> = mallows.sample(&candidate_pool, 100, &mut rng);
+        assert_eq!(profile.len(), 100);
     }
 }

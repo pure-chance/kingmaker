@@ -49,6 +49,7 @@ mod tests {
             Ordinal(vec![2, 1, 0]),
             Ordinal(vec![2, 0, 1]),
             Ordinal(vec![0, 1, 2]),
+            Ordinal(vec![2, 1, 0]),
         ]
         .into()
     }
@@ -77,7 +78,7 @@ mod tests {
         let candidate_pool = candidate_pool();
         let ballots = ordinal_ballots();
         let outcome = Plurality.outcome(&candidate_pool, &ballots);
-        assert_eq!(outcome, SingleWinner::tie(&candidate_pool, &[0, 2]));
+        assert_eq!(outcome, SingleWinner::win(&candidate_pool, 2));
     }
 
     #[test]
@@ -93,7 +94,7 @@ mod tests {
         let candidate_pool = candidate_pool();
         let ballots = ordinal_ballots();
         let outcome = Borda.outcome(&candidate_pool, &ballots);
-        assert_eq!(outcome, SingleWinner::win(&candidate_pool, 0));
+        assert_eq!(outcome, SingleWinner::tie(&candidate_pool, &[0, 1, 2]));
     }
 
     #[test]
@@ -109,7 +110,7 @@ mod tests {
         let candidate_pool = candidate_pool();
         let ballots = ordinal_ballots();
         let outcome = IRV.outcome(&candidate_pool, &ballots);
-        assert_eq!(outcome, SingleWinner::win(&candidate_pool, 0));
+        assert_eq!(outcome, SingleWinner::tie(&candidate_pool, &[0, 2]));
     }
 
     #[test]
@@ -117,6 +118,6 @@ mod tests {
         let candidate_pool = candidate_pool();
         let ballots = ordinal_ballots();
         let outcome = STV::new(2).outcome(&candidate_pool, &ballots);
-        assert_eq!(outcome, MultiWinner::seats(&candidate_pool, &[0, 1]));
+        assert_eq!(outcome, MultiWinner::seats(&candidate_pool, &[1, 2]));
     }
 }

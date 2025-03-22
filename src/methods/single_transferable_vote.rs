@@ -1,3 +1,4 @@
+use std::collections::BTreeMap;
 use std::collections::{HashMap, HashSet};
 
 use crate::core::*;
@@ -23,21 +24,20 @@ impl Method for STV {
         candidate_pool: &[Candidate],
         profile: &Profile<Self::Ballot>,
     ) -> Self::Winner {
-        let mut ballots: Vec<Self::Ballot> = profile.clone().into_iter().collect();
+        let mut ballots: Vec<Self::Ballot> = profile.into_iter().collect();
         let mut winners = HashSet::new();
         let droop_quota = ballots.len() / (self.seats + 1) + 1;
-        let mut tally: HashMap<Id, usize> = HashMap::new();
+        let mut tally: BTreeMap<Id, usize> = BTreeMap::new();
 
         while winners.len() < self.seats {
             // count first-choice votes
             tally.clear();
-            for ballot in ballots.iter() {
+            for ballot in &ballots {
                 if let Some(&first_choice) = ballot.0.first() {
                     *tally.entry(first_choice).or_insert(0) += 1;
                 }
             }
 
-            // check for winner
             let elected = tally
                 .iter()
                 .filter(|&(_, &votes)| votes >= droop_quota)
@@ -45,15 +45,15 @@ impl Method for STV {
             if let Some((winner, _)) = elected {
                 // add winner to winners set and transfer votes
                 winners.insert(*winner);
-                (*ballots.clone())
-                    .iter_mut()
-                    .for_each(|b| b.0.retain(|c| c != winner));
+                ballots.iter_mut().for_each(|b| b.0.retain(|c| c != winner));
             } else {
                 // remove candidate with fewest votes and transfer votes
                 let (loser, _) = tally.iter().min_by_key(|&(_, &votes)| votes).unwrap();
                 ballots.iter_mut().for_each(|b| b.0.retain(|c| c != loser));
             }
         }
+
+        // NOTE: If there are 2 possible elected candidates for a given round, the last one is elected that round.
 
         MultiWinner::Elected(
             winners
