@@ -4,6 +4,7 @@ mod borda;
 mod instant_runoff;
 mod plurality;
 mod random_dictator;
+mod single_transferable_vote;
 mod star;
 
 // re-exports
@@ -12,12 +13,13 @@ pub use borda::Borda;
 pub use instant_runoff::IRV;
 pub use plurality::Plurality;
 pub use random_dictator::RandomDictator;
+pub use single_transferable_vote::STV;
 pub use star::Star;
 
 #[cfg(test)]
 mod tests {
     use crate::prelude::{
-        methods::{Approval, Borda, Plurality, RandomDictator, Star, IRV},
+        methods::{Approval, Borda, Plurality, RandomDictator, Star, IRV, STV},
         *,
     };
     use std::collections::{BTreeMap, BTreeSet};
@@ -109,5 +111,13 @@ mod tests {
         let ballots = ordinal_ballots();
         let outcome = IRV.outcome(&candidate_pool, &ballots);
         assert_eq!(outcome, SingleWinner::win(&candidate_pool, 0));
+    }
+
+    #[test]
+    fn single_transferable_vote_outcome() {
+        let candidate_pool = candidate_pool();
+        let ballots = ordinal_ballots();
+        let outcome = STV::new(2).outcome(&candidate_pool, &ballots);
+        assert_eq!(outcome, MultiWinner::win(&candidate_pool, &[0, 1]));
     }
 }

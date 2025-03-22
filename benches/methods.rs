@@ -55,6 +55,12 @@ pub fn method_benchmarks(c: &mut Criterion) {
             let _outcome = IRV.outcome(&candidate_pool, &ordinal_ballots);
         })
     });
+
+    group.bench_function("single transferable vote", |b| {
+        b.iter(|| {
+            let _outcome = STV::new(2).outcome(&candidate_pool, &ordinal_ballots);
+        })
+    });
 }
 
 criterion_group! {
