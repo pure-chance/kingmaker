@@ -3,17 +3,19 @@ mod approval;
 mod borda;
 mod plurality;
 mod random_dictator;
+mod star;
 
 // re-exports
 pub use approval::Approval;
 pub use borda::Borda;
 pub use plurality::Plurality;
 pub use random_dictator::RandomDictator;
+pub use star::Star;
 
 #[cfg(test)]
 mod tests {
     use crate::prelude::{
-        methods::{Approval, Borda, Plurality, RandomDictator},
+        methods::{Approval, Borda, Plurality, RandomDictator, Star},
         *,
     };
     use std::collections::{BTreeMap, BTreeSet};
@@ -88,6 +90,14 @@ mod tests {
         let candidate_pool = candidate_pool();
         let ballots = ordinal_ballots();
         let outcome = Borda.outcome(&candidate_pool, &ballots);
+        assert_eq!(outcome, SingleWinner::win(&candidate_pool, 0));
+    }
+
+    #[test]
+    fn star_outcome() {
+        let candidate_pool = candidate_pool();
+        let ballots = cardinal_ballots();
+        let outcome = Star.outcome(&candidate_pool, &ballots);
         assert_eq!(outcome, SingleWinner::win(&candidate_pool, 0));
     }
 }

@@ -43,6 +43,12 @@ pub fn method_benchmarks(c: &mut Criterion) {
             let _outcome = Borda.outcome(&candidate_pool, &ordinal_ballots);
         })
     });
+
+    group.bench_function("star", |b| {
+        b.iter(|| {
+            let _outcome = Star.outcome(&candidate_pool, &cardinal_ballots);
+        })
+    });
 }
 
 criterion_group! {
