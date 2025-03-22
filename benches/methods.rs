@@ -49,6 +49,12 @@ pub fn method_benchmarks(c: &mut Criterion) {
             let _outcome = Star.outcome(&candidate_pool, &cardinal_ballots);
         })
     });
+
+    group.bench_function("instant runoff", |b| {
+        b.iter(|| {
+            let _outcome = IRV.outcome(&candidate_pool, &ordinal_ballots);
+        })
+    });
 }
 
 criterion_group! {
