@@ -1,17 +1,19 @@
 // modules
 mod impartial;
+mod mallows;
 mod manual;
 mod plackett_luce;
 
 // re-exports
 pub use impartial::Impartial;
+pub use mallows::Mallows;
 pub use manual::Manual;
 pub use plackett_luce::PlackettLuce;
 
 #[cfg(test)]
 mod tests {
     use crate::prelude::{
-        preferences::{Impartial, Manual, PlackettLuce},
+        preferences::{Impartial, Mallows, Manual, PlackettLuce},
         *,
     };
     use rand::{rngs::StdRng, SeedableRng};
@@ -57,6 +59,15 @@ mod tests {
         let plackett_luce = PlackettLuce::new(weights);
         let mut rng = StdRng::seed_from_u64(0);
         let outcome: Profile<Ordinal> = plackett_luce.sample(&candidate_pool, 100, &mut rng);
+        assert_eq!(outcome.len(), 100);
+    }
+
+    #[test]
+    fn mallows_outcome() {
+        let candidate_pool = candidate_pool();
+        let mallows = Mallows::new(vec![0, 1, 2], 0.5);
+        let mut rng = StdRng::seed_from_u64(0);
+        let outcome: Profile<Ordinal> = mallows.sample(&candidate_pool, 100, &mut rng);
         assert_eq!(outcome.len(), 100);
     }
 }

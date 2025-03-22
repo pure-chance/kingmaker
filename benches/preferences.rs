@@ -41,6 +41,13 @@ pub fn preference_benchmarks(c: &mut Criterion) {
                 plackett_luce.sample(&candidate_pool, VOTER_COUNT, &mut rng);
         })
     });
+
+    group.bench_function("mallows", |b| {
+        b.iter(|| {
+            let mallows = Mallows::new(vec![0, 1, 2], 0.5);
+            let _ballots: Profile<Ordinal> = mallows.sample(&candidate_pool, VOTER_COUNT, &mut rng);
+        })
+    });
 }
 
 criterion_group! {
