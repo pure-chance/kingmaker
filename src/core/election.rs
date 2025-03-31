@@ -46,33 +46,24 @@ where
     }
     /// Realizes the preferences of the voters into an honest Profile.
     pub fn realize(&self, rng: &mut StdRng) -> Profile<B> {
-        self.voter_pool()
-            .iter()
-            .flat_map(|voting_block| {
-                voting_block
-                    .preferences()
-                    .sample(self.candidates(), voting_block.members(), rng)
-            })
-            .collect::<Vec<_>>()
-            .into()
+        Profile::from_iter(self.voter_pool().iter().map(|voting_block| {
+            voting_block
+                .preferences()
+                .sample(self.candidates(), voting_block.members(), rng)
+        }))
     }
     /// Realizes the preferences of the voters and implements strategic voting.
     ///
     /// This produces a profile of strategic votes, which is what is submitted for tallying votes and determining the outcome.
     pub fn vote(&self, rng: &mut StdRng) -> Profile<B> {
-        self.voter_pool()
-            .iter()
-            .flat_map(|voting_block| {
-                let honest_ballots = voting_block.preferences().sample(
-                    self.candidates(),
-                    voting_block.members(),
-                    rng,
-                );
+        Profile::from_iter(self.voter_pool().iter().map(|voting_block| {
+            let honest_ballots =
+                voting_block
+                    .preferences()
+                    .sample(self.candidates(), voting_block.members(), rng);
 
-                voting_block.strategy().apply_profile(&honest_ballots, rng)
-            })
-            .collect::<Vec<_>>()
-            .into()
+            voting_block.strategy().apply_profile(&honest_ballots, rng)
+        }))
     }
     /// Run a single election with the given configuration
     pub fn run_once(&self, seed: u64) -> impl Outcome {

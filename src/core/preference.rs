@@ -13,10 +13,6 @@ pub trait Preference<B: Ballot>: Send + Sync + Debug {
         sample_size: usize,
         rng: &mut StdRng,
     ) -> Profile<B> {
-        Profile(
-            (0..sample_size)
-                .map(|_| self.draw(candidate_pool, rng))
-                .collect(),
-        )
+        Profile::new((0..sample_size).map(|_| self.draw(candidate_pool, rng)))
     }
 }

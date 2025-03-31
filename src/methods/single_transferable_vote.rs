@@ -23,7 +23,7 @@ impl Method for STV {
         candidate_pool: &[Candidate],
         profile: &Profile<Self::Ballot>,
     ) -> Self::Winner {
-        let mut ballots = profile.0.clone();
+        let mut ballots: Vec<Self::Ballot> = profile.clone().into_iter().collect();
         let mut winners = HashSet::new();
         let droop_quota = ballots.len() / (self.seats + 1) + 1;
         let mut tally: HashMap<Id, usize> = HashMap::new();
@@ -31,7 +31,7 @@ impl Method for STV {
         while winners.len() < self.seats {
             // count first-choice votes
             tally.clear();
-            for ballot in &ballots {
+            for ballot in ballots.iter() {
                 if let Some(&first_choice) = ballot.0.first() {
                     *tally.entry(first_choice).or_insert(0) += 1;
                 }
@@ -45,7 +45,9 @@ impl Method for STV {
             if let Some((winner, _)) = elected {
                 // add winner to winners set and transfer votes
                 winners.insert(*winner);
-                ballots.iter_mut().for_each(|b| b.0.retain(|c| c != winner));
+                (*ballots.clone())
+                    .iter_mut()
+                    .for_each(|b| b.0.retain(|c| c != winner));
             } else {
                 // remove candidate with fewest votes and transfer votes
                 let (loser, _) = tally.iter().min_by_key(|&(_, &votes)| votes).unwrap();
