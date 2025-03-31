@@ -7,6 +7,7 @@ description = "A modular, performant, social choice framework for the simulation
 keywords = [
     "voting",
     "social choice",
+    "social choice theory",
     "strategic voting",
     "computational social choice",
     "game theory",
