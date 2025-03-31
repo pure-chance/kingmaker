@@ -18,28 +18,28 @@ mod tests {
     use std::collections::BTreeSet;
 
     #[test]
-    fn test_identity() {
+    fn identity_tactic() {
         let identity = Identity;
         let nominal = Nominal(BTreeSet::new());
         assert_eq!(identity.apply(nominal.clone()), nominal);
     }
 
     #[test]
-    fn test_compromise() {
+    fn compromise_tactic() {
         let compromise = Compromise(vec![2]);
         let ordinal = Ordinal(vec![0, 2, 1]);
         assert_eq!(compromise.apply(ordinal), Ordinal(vec![2, 0, 1]))
     }
 
     #[test]
-    fn test_burial() {
+    fn burial_tactic() {
         let burial = Burial(vec![2]);
         let ordinal = Ordinal(vec![0, 2, 1]);
         assert_eq!(burial.apply(ordinal), Ordinal(vec![0, 1, 2]))
     }
 
     #[test]
-    fn test_pushover() {
+    fn pushover_tactic() {
         let pushover = Pushover(vec![0], vec![2]);
         let ordinal = Ordinal(vec![0, 1, 2]);
         assert_eq!(pushover.apply(ordinal), Ordinal(vec![0, 2, 1]))

@@ -26,7 +26,7 @@ mod tests {
     }
 
     #[test]
-    fn impartial_outcome() {
+    fn impartial_profile() {
         let candidate_pool = candidate_pool();
         let impartial = Impartial;
         let mut rng = StdRng::seed_from_u64(0);
@@ -35,7 +35,7 @@ mod tests {
     }
 
     #[test]
-    fn manual_outcome() {
+    fn manual_profile() {
         let candidate_pool = candidate_pool();
         let profile: Profile<Ordinal> = vec![
             Ordinal(vec![0, 1, 2]),
@@ -52,7 +52,7 @@ mod tests {
     }
 
     #[test]
-    fn plackett_luce_outcome() {
+    fn plackett_luce_profile() {
         let candidate_pool = candidate_pool();
         let weights = vec![(0, 1.0), (1, 1.1), (2, 1.0)];
         let plackett_luce = PlackettLuce::new(weights);
@@ -62,7 +62,7 @@ mod tests {
     }
 
     #[test]
-    fn mallows_outcome() {
+    fn mallows_profile() {
         let candidate_pool = candidate_pool();
         let mallows = Mallows::new(vec![0, 1, 2], 0.5);
         let mut rng = StdRng::seed_from_u64(0);
