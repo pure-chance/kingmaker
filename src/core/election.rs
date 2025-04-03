@@ -2,7 +2,7 @@ use rand::prelude::*;
 use rayon::prelude::*;
 use serde_json::json;
 
-use super::{Ballot, Candidate, Id, Method, Outcome, Preference, Profile, Strategy, VotingBlock};
+use super::{Ballot, Candidate, Method, Outcome, Profile, VotingBlock};
 
 /// An election is a simulation of the voting process. It is constructed with a set of conditions, a set of candidates, a pool of voters, and a method for determining the winner.
 #[derive(Debug)]
@@ -24,9 +24,18 @@ where
     C: Send + Sync,
     M: Method<Ballot = B>,
 {
-    /// Create a new election builder.
-    pub fn builder(conditions: C, method: M) -> ElectionBuilder<B, C, M> {
-        ElectionBuilder::new(conditions, method)
+    pub fn new(
+        conditions: C,
+        candidates: impl IntoIterator<Item = Candidate>,
+        voter_pool: impl IntoIterator<Item = VotingBlock<B>>,
+        method: M,
+    ) -> Self {
+        Self {
+            conditions,
+            candidates: candidates.into_iter().collect(),
+            voter_pool: voter_pool.into_iter().collect(),
+            method,
+        }
     }
     /// Get the conditions of the election.
     pub fn conditions(&self) -> &C {
@@ -46,24 +55,21 @@ where
     }
     /// Realizes the preferences of the voters into an honest Profile.
     pub fn realize(&self, rng: &mut StdRng) -> Profile<B> {
-        Profile::from_iter(self.voter_pool().iter().map(|voting_block| {
-            voting_block
-                .preferences()
-                .sample(self.candidates(), voting_block.members(), rng)
-        }))
+        Profile::from_iter(
+            self.voter_pool()
+                .iter()
+                .map(|voting_block| voting_block.realize(self.candidates(), rng)),
+        )
     }
     /// Realizes the preferences of the voters and implements strategic voting.
     ///
-    /// This produces a profile of strategic votes, which is what is submitted for tallying votes and determining the outcome.
+    /// This produces a profile of strategic votes, which is what is submitted for tabulation and outcome determination.
     pub fn vote(&self, rng: &mut StdRng) -> Profile<B> {
-        Profile::from_iter(self.voter_pool().iter().map(|voting_block| {
-            let honest_ballots =
-                voting_block
-                    .preferences()
-                    .sample(self.candidates(), voting_block.members(), rng);
-
-            voting_block.strategy().apply_profile(honest_ballots, rng)
-        }))
+        Profile::from_iter(
+            self.voter_pool()
+                .iter()
+                .map(|voting_block| voting_block.vote(self.candidates(), rng)),
+        )
     }
     /// Run a single election with the given configuration
     pub fn run_once(&self, seed: u64) -> impl Outcome {
@@ -81,16 +87,8 @@ where
             .map(|seed| self.run_once(seed))
             .collect()
     }
-}
-
-impl<B, C, M> Election<B, C, M>
-where
-    B: Ballot,
-    C: Send + Sync,
-    M: Method<Ballot = B>,
-{
     /// Tabulates the outcomes of the elections.
-    pub fn tabulate<O: Outcome>(self, outcomes: Vec<O>) -> Vec<(O, usize)> {
+    pub fn tabulate<O: Outcome>(&self, outcomes: Vec<O>) -> Vec<(O, usize)> {
         let mut result: Vec<(O, usize)> = Vec::new();
         for outcome in outcomes {
             match result.iter_mut().find(|(o, _)| o == &outcome) {
@@ -101,7 +99,7 @@ where
         result
     }
     /// Displays the tabulated outcomes of the elections.
-    pub fn display<O: Outcome + std::fmt::Display>(self, outcomes: Vec<O>) {
+    pub fn display<O: Outcome + std::fmt::Display>(&self, outcomes: Vec<O>) {
         let tabulated = self.tabulate(outcomes);
         for (outcome, count) in tabulated {
             println!("{}: {}", outcome, count);
@@ -125,73 +123,5 @@ where
             "configuration": configuration,
             "outcomes": outcomes
         })
-    }
-}
-
-/// Constructs an election with the given conditions and method.
-pub struct ElectionBuilder<B, C, M>
-where
-    B: Ballot,
-    C: Send + Sync,
-    M: Method<Ballot = B>,
-{
-    conditions: C,
-    candidates: Option<Vec<Candidate>>,
-    voter_pool: Option<Vec<VotingBlock<B>>>,
-    method: M,
-}
-
-impl<B, C, M> ElectionBuilder<B, C, M>
-where
-    B: Ballot,
-    C: Send + Sync,
-    M: Method<Ballot = B>,
-{
-    pub fn new(conditions: C, method: M) -> Self {
-        Self {
-            conditions,
-            candidates: None,
-            voter_pool: None,
-            method,
-        }
-    }
-    pub fn set_conditions(mut self, conditions: C) -> Self {
-        self.conditions = conditions;
-        self
-    }
-    pub fn set_method(mut self, method: M) -> Self {
-        self.method = method;
-        self
-    }
-    pub fn add_candidate(
-        mut self,
-        id: Id,
-        name: &str,
-        party: Option<&str>,
-        positions: Option<Vec<f32>>,
-    ) -> Self {
-        let candidate = Candidate::new(id, name, party, positions);
-        self.candidates.get_or_insert_with(Vec::new).push(candidate);
-        self
-    }
-    pub fn add_voting_block(
-        mut self,
-        preference: impl Preference<B> + 'static,
-        strategy: Strategy<B>,
-        members: usize,
-    ) -> Self {
-        let voting_block = VotingBlock::new(preference, strategy, members);
-        self.voter_pool
-            .get_or_insert_with(Vec::new)
-            .push(voting_block);
-        self
-    }
-    pub fn build(self) -> Election<B, C, M> {
-        Election {
-            conditions: self.conditions,
-            candidates: self.candidates.unwrap_or_default(),
-            voter_pool: self.voter_pool.unwrap_or_default(),
-            method: self.method,
-        }
     }
 }

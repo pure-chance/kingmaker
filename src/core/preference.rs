@@ -1,6 +1,8 @@
-use super::{Ballot, Candidate, Profile};
-use rand::rngs::StdRng;
 use std::fmt::Debug;
+
+use rand::rngs::StdRng;
+
+use crate::core::{Ballot, Candidate, Profile};
 
 /// A preference can be conceptualized as the preferences of the voter as they exist in their head before being written down.
 ///

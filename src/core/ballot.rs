@@ -86,6 +86,13 @@ impl<'a, B: Ballot> IntoIterator for &'a Profile<B> {
     }
 }
 
+impl<B: Ballot> FromIterator<B> for Profile<B> {
+    fn from_iter<T: IntoIterator<Item = B>>(iter: T) -> Self {
+        let all_ballots: Vec<B> = iter.into_iter().collect();
+        Profile(all_ballots.into_boxed_slice())
+    }
+}
+
 impl<B: Ballot> FromIterator<Profile<B>> for Profile<B> {
     fn from_iter<T: IntoIterator<Item = Profile<B>>>(iter: T) -> Self {
         let all_ballots: Vec<B> = iter
