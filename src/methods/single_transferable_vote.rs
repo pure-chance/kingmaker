@@ -21,7 +21,7 @@ impl Method for STV {
     fn outcome(
         &self,
         candidate_pool: &[Candidate],
-        profile: &Profile<Self::Ballot>,
+        profile: Profile<Self::Ballot>,
     ) -> Self::Winner {
         let mut ballots: Vec<Self::Ballot> = profile.into_iter().collect();
         let mut winners = HashSet::new();

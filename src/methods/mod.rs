@@ -69,7 +69,7 @@ mod tests {
     fn random_dictator_outcome() {
         let candidate_pool = candidate_pool();
         let ballots: Profile<Ordinal> = ordinal_ballots();
-        let outcome = RandomDictator.outcome(&candidate_pool, &ballots);
+        let outcome = RandomDictator.outcome(&candidate_pool, ballots);
         assert_eq!(outcome, SingleWinner::win(&candidate_pool, 0));
     }
 
@@ -77,7 +77,7 @@ mod tests {
     fn plurality_outcome() {
         let candidate_pool = candidate_pool();
         let ballots = ordinal_ballots();
-        let outcome = Plurality.outcome(&candidate_pool, &ballots);
+        let outcome = Plurality.outcome(&candidate_pool, ballots);
         assert_eq!(outcome, SingleWinner::win(&candidate_pool, 2));
     }
 
@@ -85,7 +85,7 @@ mod tests {
     fn approval_outcome() {
         let candidate_pool = candidate_pool();
         let ballots = nominal_ballots();
-        let outcome = Approval.outcome(&candidate_pool, &ballots);
+        let outcome = Approval.outcome(&candidate_pool, ballots);
         assert_eq!(outcome, SingleWinner::win(&candidate_pool, 1));
     }
 
@@ -93,7 +93,7 @@ mod tests {
     fn borda_outcome() {
         let candidate_pool = candidate_pool();
         let ballots = ordinal_ballots();
-        let outcome = Borda.outcome(&candidate_pool, &ballots);
+        let outcome = Borda.outcome(&candidate_pool, ballots);
         assert_eq!(outcome, SingleWinner::tie(&candidate_pool, &[0, 1, 2]));
     }
 
@@ -101,7 +101,7 @@ mod tests {
     fn star_outcome() {
         let candidate_pool = candidate_pool();
         let ballots = cardinal_ballots();
-        let outcome = Star.outcome(&candidate_pool, &ballots);
+        let outcome = Star.outcome(&candidate_pool, ballots);
         assert_eq!(outcome, SingleWinner::win(&candidate_pool, 0));
     }
 
@@ -109,7 +109,7 @@ mod tests {
     fn instant_runoff_outcome() {
         let candidate_pool = candidate_pool();
         let ballots = ordinal_ballots();
-        let outcome = IRV.outcome(&candidate_pool, &ballots);
+        let outcome = IRV.outcome(&candidate_pool, ballots);
         assert_eq!(outcome, SingleWinner::tie(&candidate_pool, &[0, 2]));
     }
 
@@ -117,7 +117,7 @@ mod tests {
     fn single_transferable_vote_outcome() {
         let candidate_pool = candidate_pool();
         let ballots = ordinal_ballots();
-        let outcome = STV::new(2).outcome(&candidate_pool, &ballots);
+        let outcome = STV::new(2).outcome(&candidate_pool, ballots);
         assert_eq!(outcome, MultiWinner::seats(&candidate_pool, &[1, 2]));
     }
 }

@@ -10,13 +10,12 @@ impl Method for RandomDictator {
     fn outcome(
         &self,
         candidate_pool: &[Candidate],
-        profile: &Profile<Self::Ballot>,
+        profile: Profile<Self::Ballot>,
     ) -> Self::Winner {
         if profile.is_empty() {
             return SingleWinner::None;
         }
-        let random_ballot = &profile[0];
-        let winner = random_ballot[0];
+        let winner = profile[0][0];
         SingleWinner::win(candidate_pool, winner)
     }
 }

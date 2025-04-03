@@ -22,43 +22,44 @@ pub fn method_benchmarks(c: &mut Criterion) {
 
     group.bench_function("random dictator", |b| {
         b.iter(|| {
-            let _outcome = RandomDictator.outcome(&candidate_pool, &ordinal_ballots);
+            let _outcome =
+                RandomDictator.outcome(&candidate_pool, Profile::clone(&ordinal_ballots));
         })
     });
 
     group.bench_function("plurality", |b| {
         b.iter(|| {
-            let _outcome = Plurality.outcome(&candidate_pool, &ordinal_ballots);
+            let _outcome = Plurality.outcome(&candidate_pool, Profile::clone(&ordinal_ballots));
         })
     });
 
     group.bench_function("approval", |b| {
         b.iter(|| {
-            let _outcome = Approval.outcome(&candidate_pool, &nominal_ballots);
+            let _outcome = Approval.outcome(&candidate_pool, Profile::clone(&nominal_ballots));
         })
     });
 
     group.bench_function("borda", |b| {
         b.iter(|| {
-            let _outcome = Borda.outcome(&candidate_pool, &ordinal_ballots);
+            let _outcome = Borda.outcome(&candidate_pool, Profile::clone(&ordinal_ballots));
         })
     });
 
     group.bench_function("star", |b| {
         b.iter(|| {
-            let _outcome = Star.outcome(&candidate_pool, &cardinal_ballots);
+            let _outcome = Star.outcome(&candidate_pool, Profile::clone(&cardinal_ballots));
         })
     });
 
     group.bench_function("instant runoff", |b| {
         b.iter(|| {
-            let _outcome = IRV.outcome(&candidate_pool, &ordinal_ballots);
+            let _outcome = IRV.outcome(&candidate_pool, Profile::clone(&ordinal_ballots));
         })
     });
 
     group.bench_function("single transferable vote", |b| {
         b.iter(|| {
-            let _outcome = STV::new(2).outcome(&candidate_pool, &ordinal_ballots);
+            let _outcome = STV::new(2).outcome(&candidate_pool, Profile::clone(&ordinal_ballots));
         })
     });
 }

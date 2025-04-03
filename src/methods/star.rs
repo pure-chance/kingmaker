@@ -12,7 +12,7 @@ impl Method for Star {
     fn outcome(
         &self,
         candidate_pool: &[Candidate],
-        profile: &Profile<Self::Ballot>,
+        profile: Profile<Self::Ballot>,
     ) -> Self::Winner {
         // score candidates
         let mut tally: HashMap<Id, usize> = HashMap::with_capacity(profile.len());

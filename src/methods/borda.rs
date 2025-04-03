@@ -12,7 +12,7 @@ impl Method for Borda {
     fn outcome(
         &self,
         candidate_pool: &[Candidate],
-        profile: &Profile<Self::Ballot>,
+        profile: Profile<Self::Ballot>,
     ) -> Self::Winner {
         let mut tally: HashMap<Id, usize> = HashMap::with_capacity(profile.len());
         (0..profile.len()).for_each(|i| {

@@ -40,7 +40,7 @@ impl<B: Ballot> Strategy<B> {
         let tactic = &self.tactics()[WeightedIndex::new(&weights).unwrap().sample(rng)];
         tactic.apply(ballot)
     }
-    pub fn apply_profile(&self, profile: &Profile<B>, rng: &mut StdRng) -> Profile<B> {
+    pub fn apply_profile(&self, profile: Profile<B>, rng: &mut StdRng) -> Profile<B> {
         profile
             .iter()
             .map(|ballot| self.apply(ballot.clone(), rng))

@@ -12,7 +12,7 @@ impl Method for IRV {
     fn outcome(
         &self,
         candidate_pool: &[Candidate],
-        profile: &Profile<Self::Ballot>,
+        profile: Profile<Self::Ballot>,
     ) -> Self::Winner {
         let majority = profile.len() / 2 + 1;
         let mut remaining_ranking: Vec<Self::Ballot> = profile.iter().cloned().collect();
