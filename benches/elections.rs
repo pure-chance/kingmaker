@@ -5,16 +5,16 @@ pub fn election_benchmarks(c: &mut Criterion) {
     let mut group = c.benchmark_group("election");
 
     fn election_setup() -> Election<Ordinal, (), methods::Plurality> {
-        Election::builder((), methods::Plurality)
-            .add_candidate(0, "A", Some("DEM"), None)
-            .add_candidate(1, "B", Some("REP"), None)
-            .add_candidate(2, "C", None, None)
-            .add_voting_block(
-                preferences::Mallows::new(vec![0, 1, 2], 0.0),
-                Strategy::new().add_tactic(tactics::Identity, 1.0),
-                100,
-            )
-            .build()
+        // configure election
+        let candidate_pool = vec![
+            Candidate::new(0, "A", Some("DEM"), None),
+            Candidate::new(1, "A", Some("REP"), None),
+            Candidate::new(2, "C", None, None),
+        ];
+        let all = VotingBlock::builder(preferences::Mallows::new(vec![0, 1, 2], 0.0), 100)
+            .add_tactic(tactics::Identity, 0.8)
+            .build();
+        Election::new((), candidate_pool, [all], methods::Plurality)
     }
 
     group.bench_function("single election", |b| {

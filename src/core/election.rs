@@ -1,3 +1,4 @@
+use polars::prelude::*;
 use rand::prelude::*;
 use rayon::prelude::*;
 use serde_json::json;
@@ -105,10 +106,51 @@ where
             println!("{}: {}", outcome, count);
         }
     }
-    fn write_configuration(&self) -> serde_json::Value {
-        "".into()
+}
+
+#[cfg(feature = "visualize")]
+impl<B, C, M> Election<B, C, M>
+where
+    B: Ballot,
+    C: Send + Sync + std::fmt::Debug,
+    M: Method<Ballot = B> + std::fmt::Debug,
+{
+    pub fn visualize<O: Outcome>(&self, outcomes: Vec<O>) {
+        let tabulated = self.tabulate(outcomes);
+        let df = DataFrame::new(vec![
+            Column::new(
+                "outcome".into(),
+                tabulated
+                    .iter()
+                    .map(|(outcome, _)| format!("{}", outcome))
+                    .collect::<Vec<_>>(),
+            ),
+            Column::new(
+                "count".into(),
+                tabulated
+                    .iter()
+                    .map(|(_, count)| format!("{}", count))
+                    .collect::<Vec<_>>(),
+            ),
+        ])
+        .unwrap();
+        println!("{}", df);
     }
-    fn write_outcomes<O: Outcome>(self, outcomes: Vec<O>) -> serde_json::Value {
+    fn configuration(&self) -> serde_json::Value {
+        json!({
+            "conditions": format!("{:?}", self.conditions()),
+            "candidates": self.candidates(),
+            "voting_blocks": self.voter_pool().iter().map(|block| {
+                json!({
+                    "preferences": format!("{:?}", block.preferences()),
+                    "strategy": format!("{:?}", block.strategy()),
+                    "members": block.members()
+                })
+            }).collect::<Vec<_>>(),
+            "method": format!("{:?}", self.method()) // only need the name
+        })
+    }
+    fn outcomes<O: Outcome>(self, outcomes: Vec<O>) -> serde_json::Value {
         let tabulated = self.tabulate(outcomes);
         tabulated
             .iter()
@@ -117,8 +159,8 @@ where
             .into()
     }
     pub fn write<O: Outcome>(self, outcomes: Vec<O>) -> serde_json::Value {
-        let configuration = self.write_configuration();
-        let outcomes = self.write_outcomes(outcomes);
+        let configuration = self.configuration();
+        let outcomes = self.outcomes(outcomes);
         json!({
             "configuration": configuration,
             "outcomes": outcomes

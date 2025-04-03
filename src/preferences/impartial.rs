@@ -1,5 +1,7 @@
 use crate::core::*;
+
 use rand::{rngs::StdRng, Rng};
+use serde::Serialize;
 
 /// The `Impartial` preference model generates rankings by assuming that all possible rankings are equally likely, leading to a uniform random distribution over all permutations.
 ///
@@ -20,7 +22,7 @@ use rand::{rngs::StdRng, Rng};
 /// - The `Impartial` model represents a completely neutral preference structure.
 /// - It is often used as a baseline for analyzing voting systems.
 /// - As `n` increases, the number of possible rankings grows factorially, making exhaustive enumeration infeasible for large values of `n`.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize)]
 pub struct Impartial;
 
 impl Impartial {

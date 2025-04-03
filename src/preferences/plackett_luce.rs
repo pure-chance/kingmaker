@@ -1,5 +1,7 @@
 use crate::core::*;
+
 use rand::{distr::weighted::WeightedIndex, prelude::*};
+use serde::Serialize;
 
 /// The Plackett-Luce model is a probabilistic model for generating preference rankings based on candidates' weights. A ballot is constructed by incrementally selecting candidates, where the probability of choosing a candidate is proportional to its weight.
 ///
@@ -24,7 +26,7 @@ use rand::{distr::weighted::WeightedIndex, prelude::*};
 /// - Higher weights correspond to higher chances of being ranked earlier.
 /// - The model naturally handles different numbers of candidates and allows flexible weight assignments.
 /// - If all candidates have equal weights, the ranking is uniformly random.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize)]
 pub struct PlackettLuce {
     weights: Vec<(Id, f32)>,
 }

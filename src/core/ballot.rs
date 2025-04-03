@@ -4,33 +4,34 @@ use std::ops::{Deref, Index};
 use std::slice::Iter;
 
 use derive_more::{Deref, DerefMut, From};
+use serde::Serialize;
 
 use super::Id;
 
 /// A ballot type that can be cast in an election. A ballot is an expression of a voter's preferences. There are three ballot types: `Nominal`, `Ordinal`, and `Cardinal`.
-pub trait Ballot: Debug + Deref + Send + Sync + Clone {}
+pub trait Ballot: Debug + Deref + Send + Sync + Clone + Serialize {}
 
 /// Approval ballot: A set of approved candidates
 #[repr(transparent)]
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Deref, DerefMut)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Deref, DerefMut, Serialize)]
 pub struct Nominal(pub BTreeSet<Id>);
 impl Ballot for Nominal {}
 
 /// Ranked ballot: An ordered list of candidates
 #[repr(transparent)]
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Deref, DerefMut)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Deref, DerefMut, Serialize)]
 pub struct Ordinal(pub Vec<Id>);
 impl Ballot for Ordinal {}
 
 /// Score ballot: A map of candidates to scores
 #[repr(transparent)]
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Deref, DerefMut)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Deref, DerefMut, Serialize)]
 pub struct Cardinal(pub BTreeMap<Id, usize>);
 impl Ballot for Cardinal {}
 
 /// A collection of ballots.
 #[repr(transparent)]
-#[derive(Debug, Clone, PartialEq, Eq, From)]
+#[derive(Debug, Clone, PartialEq, Eq, From, Serialize)]
 pub struct Profile<B: Ballot>(Box<[B]>);
 
 impl<B: Ballot> Profile<B> {

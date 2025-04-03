@@ -1,5 +1,7 @@
 use crate::core::*;
+
 use rand::{rngs::StdRng, Rng};
+use serde::Serialize;
 
 /// Manual Preference Model
 ///
@@ -22,7 +24,7 @@ use rand::{rngs::StdRng, Rng};
 /// - This method ensures that generated preferences are grounded in empirical data.
 /// - Unlike Mallows or Plackett-Luce, `Manual` does not impose a probabilistic structure, making it suitable for scenarios where real-world rankings are preferred.
 /// - If the dataset is small, rankings may be repeated frequently in generated samples.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize)]
 pub struct Manual<B: Ballot> {
     votes: Profile<B>,
 }
