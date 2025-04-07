@@ -89,7 +89,7 @@ where
             .collect()
     }
     /// Tabulates the outcomes of the elections.
-    pub fn tabulate<O: Outcome>(&self, outcomes: Vec<O>) -> Vec<(O, usize)> {
+    pub fn tabulate<O: Outcome>(&self, outcomes: impl IntoIterator<Item = O>) -> Vec<(O, usize)> {
         let mut result: Vec<(O, usize)> = Vec::new();
         for outcome in outcomes {
             match result.iter_mut().find(|(o, _)| o == &outcome) {
@@ -100,7 +100,7 @@ where
         result
     }
     /// Displays the tabulated outcomes of the elections.
-    pub fn display<O: Outcome + std::fmt::Display>(&self, outcomes: Vec<O>) {
+    pub fn display<O: Outcome + std::fmt::Display>(&self, outcomes: impl IntoIterator<Item = O>) {
         let tabulated = self.tabulate(outcomes);
         for (outcome, count) in tabulated {
             println!("{}: {}", outcome, count);
