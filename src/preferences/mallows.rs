@@ -80,7 +80,8 @@ fn sample_decomposotion_vector(n: usize, k: usize, rng: &mut StdRng) -> Vec<usiz
         }
         let slots = n - i - 1;
         let max_value = slots.min(remaining_inv);
-        let min_value = remaining_inv - ((slots) * (slots - 1) / 2);
+        let min_value = (remaining_inv - ((slots) * (slots - 1) / 2)).min(0);
+        // NOTE: if remaining_inv < ((slots) * (slots - 1) / 2) then there are enough slots left to sample 0 inversions
         let sampled_value = rng.random_range(min_value..=max_value);
         *item = sampled_value;
         remaining_inv -= sampled_value;
