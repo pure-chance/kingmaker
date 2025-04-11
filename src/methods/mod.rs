@@ -17,10 +17,7 @@ pub use star::Star;
 
 #[cfg(test)]
 mod tests {
-    use crate::prelude::{
-        methods::{Approval, Borda, Plurality, RandomDictator, Star, IRV, STV},
-        *,
-    };
+    use crate::prelude::{methods::*, *};
     use std::collections::{BTreeMap, BTreeSet};
 
     fn candidate_pool() -> Vec<Candidate> {

@@ -8,6 +8,7 @@ use super::{Ballot, Candidate, Outcome, Profile};
 pub trait Method: Send + Sync {
     type Ballot: Ballot;
     type Winner: Outcome;
+    /// Determines the outcome of an election.
     fn outcome(&self, candidate_pool: &[Candidate], profile: Profile<Self::Ballot>)
         -> Self::Winner;
 }

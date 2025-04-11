@@ -6,5 +6,6 @@ use crate::core::Ballot;
 ///
 /// Note that this implementation considers tactics to be a separate process that occurs *after* realization. This is a limitation of the model.
 pub trait Tactic<B: Ballot>: Send + Sync + Debug {
+    /// Applies the tactic to the given ballot.
     fn apply(&self, ballot: B) -> B;
 }

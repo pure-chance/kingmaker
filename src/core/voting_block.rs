@@ -8,13 +8,16 @@ use crate::tactics::Identity;
 
 use super::Profile;
 
-/// A block of voters, such as democrats / republicans, or rural / suburban / urban.
+/// A block of voters, e.g. democrats / republicans or rural / suburban / urban.
 ///
 /// A block of voters is considered to have a single aggregate preference and set of tactics. They represent the sum total distribution across all the voters in the block. When a voter draws from this distribution, that is the expression of their preferences / individuality.
 #[derive(Debug)]
 pub struct VotingBlock<B: Ballot> {
+    /// The preference of the voting block
     preference: Arc<dyn Preference<B>>,
+    /// The strategy of the voting block
     strategy: Vec<(Arc<dyn Tactic<B>>, f32)>,
+    /// The number of members in the voting block
     members: usize,
 }
 

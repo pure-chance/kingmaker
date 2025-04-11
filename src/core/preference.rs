@@ -8,7 +8,9 @@ use crate::core::{Ballot, Candidate, Profile};
 ///
 /// It is defined as a distribution over possible realizations (ballots), where at election time, one such realization is drawn.
 pub trait Preference<B: Ballot>: Send + Sync + Debug {
+    /// Draws a ballot from the preference distribution.
     fn draw(&self, candidate_pool: &[Candidate], rng: &mut StdRng) -> B;
+    /// Samples a profile from the preference distribution.
     fn sample(
         &self,
         candidate_pool: &[Candidate],
