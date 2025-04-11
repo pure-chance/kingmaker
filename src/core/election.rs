@@ -7,40 +7,31 @@ use super::{Ballot, Candidate, Method, Outcome, Profile, VotingBlock};
 
 /// An election is a simulation of the voting process. It is constructed with a set of conditions, a set of candidates, a pool of voters, and a method for determining the winner.
 #[derive(Debug)]
-pub struct Election<B, C, M>
+pub struct Election<B, M>
 where
     B: Ballot,
-    C: Send + Sync,
     M: Method<Ballot = B>,
 {
-    conditions: C,
     candidates: Vec<Candidate>,
     voter_pool: Vec<VotingBlock<B>>,
     method: M,
 }
 
-impl<B, C, M> Election<B, C, M>
+impl<B, M> Election<B, M>
 where
     B: Ballot,
-    C: Send + Sync,
     M: Method<Ballot = B>,
 {
     pub fn new(
-        conditions: C,
         candidates: impl IntoIterator<Item = Candidate>,
         voter_pool: impl IntoIterator<Item = VotingBlock<B>>,
         method: M,
     ) -> Self {
         Self {
-            conditions,
             candidates: candidates.into_iter().collect(),
             voter_pool: voter_pool.into_iter().collect(),
             method,
         }
-    }
-    /// Get the conditions of the election.
-    pub fn conditions(&self) -> &C {
-        &self.conditions
     }
     /// Get the candidates up for election.
     pub fn candidates(&self) -> &[Candidate] {
@@ -109,10 +100,9 @@ where
 }
 
 #[cfg(feature = "visualize")]
-impl<B, C, M> Election<B, C, M>
+impl<B, M> Election<B, M>
 where
     B: Ballot,
-    C: Send + Sync + std::fmt::Debug,
     M: Method<Ballot = B> + std::fmt::Debug,
 {
     pub fn visualize<O: Outcome>(&self, outcomes: Vec<O>) {
@@ -138,7 +128,6 @@ where
     }
     fn configuration(&self) -> serde_json::Value {
         json!({
-            "conditions": format!("{:?}", self.conditions()),
             "candidates": self.candidates(),
             "voting_blocks": self.voter_pool().iter().map(|block| {
                 json!({

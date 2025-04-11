@@ -17,7 +17,7 @@ fn main() {
             .add_tactic(tactics::Burial(vec![1]), 0.3)
             .build(),
     ];
-    let election = Election::new((), candidate_pool, voter_pool, methods::Plurality);
+    let election = Election::new(candidate_pool, voter_pool, methods::Plurality);
     // run election(s)
     let outcomes = election.run_many(1_000, 0);
     // display outcome
