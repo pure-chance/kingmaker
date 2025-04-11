@@ -1,6 +1,6 @@
 use crate::core::*;
 
-use rand::{rngs::StdRng, Rng};
+use rand::{Rng, rngs::StdRng};
 use serde::Serialize;
 
 /// Manual Preference Model

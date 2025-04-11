@@ -1,4 +1,4 @@
-use criterion::{criterion_group, criterion_main, Criterion};
+use criterion::{Criterion, criterion_group, criterion_main};
 use kingmaker::prelude::*;
 
 pub fn election_benchmarks(c: &mut Criterion) {

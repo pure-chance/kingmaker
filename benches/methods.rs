@@ -1,6 +1,6 @@
-use criterion::{criterion_group, criterion_main, Criterion};
+use criterion::{Criterion, criterion_group, criterion_main};
 use kingmaker::prelude::{methods::*, preferences::*, *};
-use rand::{rngs::StdRng, SeedableRng};
+use rand::{SeedableRng, rngs::StdRng};
 
 pub fn method_benchmarks(c: &mut Criterion) {
     let mut group = c.benchmark_group("methods");

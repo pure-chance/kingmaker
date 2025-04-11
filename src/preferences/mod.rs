@@ -15,7 +15,7 @@ mod tests {
         preferences::{Impartial, Mallows, Manual, PlackettLuce},
         *,
     };
-    use rand::{rngs::StdRng, SeedableRng};
+    use rand::{SeedableRng, rngs::StdRng};
 
     fn candidate_pool() -> Vec<Candidate> {
         vec![

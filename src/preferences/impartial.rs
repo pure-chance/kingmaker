@@ -1,6 +1,6 @@
 use crate::core::*;
 
-use rand::{rngs::StdRng, Rng};
+use rand::{Rng, rngs::StdRng};
 use serde::Serialize;
 
 /// The `Impartial` preference model generates rankings by assuming that all possible rankings are equally likely, leading to a uniform random distribution over all permutations.

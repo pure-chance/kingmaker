@@ -10,5 +10,5 @@ pub trait Method: Send + Sync {
     type Winner: Outcome;
     /// Determines the outcome of an election.
     fn outcome(&self, candidate_pool: &[Candidate], profile: Profile<Self::Ballot>)
-        -> Self::Winner;
+    -> Self::Winner;
 }
