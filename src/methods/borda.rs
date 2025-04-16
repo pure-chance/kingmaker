@@ -9,11 +9,7 @@ pub struct Borda;
 impl Method for Borda {
     type Ballot = Ordinal;
     type Winner = SingleWinner;
-    fn outcome(
-        &self,
-        candidate_pool: &[Candidate],
-        profile: Profile<Self::Ballot>,
-    ) -> Self::Winner {
+    fn outcome(&self, candidates: &[Candidate], profile: Profile<Self::Ballot>) -> Self::Winner {
         let mut tally: HashMap<Id, usize> = HashMap::with_capacity(profile.len());
         (0..profile.len()).for_each(|i| {
             for (i, candidate) in profile[i].iter().enumerate() {
@@ -28,8 +24,8 @@ impl Method for Borda {
             .collect();
         match winners.len() {
             0 => SingleWinner::none(),
-            1 => SingleWinner::win(candidate_pool, winners[0]),
-            _ => SingleWinner::tie(candidate_pool, &winners),
+            1 => SingleWinner::win(candidates, winners[0]),
+            _ => SingleWinner::tie(candidates, &winners),
         }
     }
 }

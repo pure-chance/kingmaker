@@ -36,7 +36,7 @@ impl<B: Ballot> Manual<B> {
 }
 
 impl<B: Ballot> Preference<B> for Manual<B> {
-    fn draw(&self, _candidate_pool: &[Candidate], rng: &mut StdRng) -> B {
+    fn draw(&self, _candidates: &[Candidate], rng: &mut StdRng) -> B {
         self.votes[rng.random_range(0..self.votes.len())].to_owned()
     }
 }

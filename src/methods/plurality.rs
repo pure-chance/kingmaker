@@ -9,11 +9,7 @@ pub struct Plurality;
 impl Method for Plurality {
     type Ballot = Ordinal;
     type Winner = SingleWinner;
-    fn outcome(
-        &self,
-        candidate_pool: &[Candidate],
-        profile: Profile<Self::Ballot>,
-    ) -> Self::Winner {
+    fn outcome(&self, candidates: &[Candidate], profile: Profile<Self::Ballot>) -> Self::Winner {
         let mut tally: HashMap<Id, usize> = HashMap::with_capacity(profile.len());
         profile
             .iter()
@@ -31,8 +27,8 @@ impl Method for Plurality {
             .collect();
         match winners.len() {
             0 => SingleWinner::none(),
-            1 => SingleWinner::win(candidate_pool, winners[0]),
-            _ => SingleWinner::tie(candidate_pool, &winners),
+            1 => SingleWinner::win(candidates, winners[0]),
+            _ => SingleWinner::tie(candidates, &winners),
         }
     }
 }

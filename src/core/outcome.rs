@@ -42,21 +42,15 @@ pub enum SingleWinner {
 }
 impl SingleWinner {
     /// Construct a `SingleWinner::Win()`
-    pub fn win(candidate_pool: &[Candidate], id: Id) -> Self {
-        SingleWinner::Win(
-            candidate_pool
-                .iter()
-                .find(|c| c.id() == id)
-                .unwrap()
-                .to_owned(),
-        )
+    pub fn win(candidates: &[Candidate], id: Id) -> Self {
+        SingleWinner::Win(candidates.iter().find(|c| c.id() == id).unwrap().to_owned())
     }
     /// Construct a `SingleWinner::Tie()`
-    pub fn tie(candidate_pool: &[Candidate], ids: &[Id]) -> Self {
+    pub fn tie(candidates: &[Candidate], ids: &[Id]) -> Self {
         SingleWinner::Tie(
             ids.iter()
                 .map(|id| {
-                    candidate_pool
+                    candidates
                         .iter()
                         .find(|c| &c.id() == id)
                         .unwrap()
@@ -82,11 +76,11 @@ pub enum MultiWinner {
 
 impl MultiWinner {
     /// Construct a `MultiWinner::Elected()`
-    pub fn seats(candidate_pool: &[Candidate], ids: &[Id]) -> Self {
+    pub fn seats(candidates: &[Candidate], ids: &[Id]) -> Self {
         MultiWinner::Elected(
             ids.iter()
                 .map(|id| {
-                    candidate_pool
+                    candidates
                         .iter()
                         .find(|c| &c.id() == id)
                         .unwrap()

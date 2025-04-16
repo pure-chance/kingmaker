@@ -1,11 +1,12 @@
+#[cfg(feature = "visualize")]
 use polars::prelude::*;
 use rand::prelude::*;
 use rayon::prelude::*;
 use serde_json::json;
 
-use super::{Ballot, Candidate, Method, Outcome, Profile, VotingBlock};
+use super::{Ballot, Candidate, Method, Outcome, Profile, VotingBloc};
 
-/// An election is a simulation of the voting process. It is constructed with a set of conditions, a set of candidates, a pool of voters, and a method for determining the winner.
+/// An election is a simulation of the voting process. It is constructed with a set of conditions, a set of candidates, a set of voting blocs, and a method for determining the winner.
 #[derive(Debug)]
 pub struct Election<B, M>
 where
@@ -13,7 +14,7 @@ where
     M: Method<Ballot = B>,
 {
     candidates: Vec<Candidate>,
-    voter_pool: Vec<VotingBlock<B>>,
+    voting_blocs: Vec<VotingBloc<B>>,
     method: M,
 }
 
@@ -24,12 +25,12 @@ where
 {
     pub fn new(
         candidates: impl IntoIterator<Item = Candidate>,
-        voter_pool: impl IntoIterator<Item = VotingBlock<B>>,
+        voting_blocs: impl IntoIterator<Item = VotingBloc<B>>,
         method: M,
     ) -> Self {
         Self {
             candidates: candidates.into_iter().collect(),
-            voter_pool: voter_pool.into_iter().collect(),
+            voting_blocs: voting_blocs.into_iter().collect(),
             method,
         }
     }
@@ -37,9 +38,9 @@ where
     pub fn candidates(&self) -> &[Candidate] {
         &self.candidates
     }
-    /// Get the pool of voters
-    pub fn voter_pool(&self) -> &[VotingBlock<B>] {
-        &self.voter_pool
+    /// Get the voting blocs
+    pub fn voting_blocs(&self) -> &[VotingBloc<B>] {
+        &self.voting_blocs
     }
     /// Get the method used to determine the winner of the election.
     pub fn method(&self) -> &M {
@@ -48,9 +49,9 @@ where
     /// Realizes the preferences of the voters into an honest Profile.
     pub fn realize(&self, rng: &mut StdRng) -> Profile<B> {
         Profile::from_iter(
-            self.voter_pool()
+            self.voting_blocs()
                 .iter()
-                .map(|voting_block| voting_block.realize(self.candidates(), rng)),
+                .map(|voting_bloc| voting_bloc.realize(self.candidates(), rng)),
         )
     }
     /// Realizes the preferences of the voters and implements strategic voting.
@@ -58,9 +59,9 @@ where
     /// This produces a profile of strategic votes, which is what is submitted for tabulation and outcome determination.
     pub fn vote(&self, rng: &mut StdRng) -> Profile<B> {
         Profile::from_iter(
-            self.voter_pool()
+            self.voting_blocs()
                 .iter()
-                .map(|voting_block| voting_block.vote(self.candidates(), rng)),
+                .map(|voting_bloc| voting_bloc.vote(self.candidates(), rng)),
         )
     }
     /// Run a single election with the given configuration
@@ -83,28 +84,26 @@ where
     pub fn tabulate<O: Outcome>(&self, outcomes: impl IntoIterator<Item = O>) -> Vec<(O, usize)> {
         let mut result: Vec<(O, usize)> = Vec::new();
         for outcome in outcomes {
-            match result.iter_mut().find(|(o, _)| o == &outcome) {
+            match result.iter_mut().find(|(o, _)| *o == outcome) {
                 Some((_, count)) => *count += 1,
                 None => result.push((outcome, 1)),
             }
         }
         result
     }
-    /// Displays the tabulated outcomes of the elections.
-    pub fn display<O: Outcome + std::fmt::Display>(&self, outcomes: impl IntoIterator<Item = O>) {
-        let tabulated = self.tabulate(outcomes);
-        for (outcome, count) in tabulated {
-            println!("{}: {}", outcome, count);
-        }
+    pub fn display<O: Outcome>(&self, outcomes: &[O]) {
+        let tabulated = self.tabulate(outcomes.iter().cloned());
+        println!("{:?}", tabulated);
     }
 }
 
-#[cfg(feature = "visualize")]
 impl<B, M> Election<B, M>
 where
     B: Ballot,
     M: Method<Ballot = B> + std::fmt::Debug,
 {
+    /// Visualizes the tabulated outcomes of the elections in a DataFrame.
+    #[cfg(feature = "visualize")]
     pub fn visualize<O: Outcome>(&self, outcomes: Vec<O>) {
         let tabulated = self.tabulate(outcomes);
         let df = DataFrame::new(vec![
@@ -129,17 +128,17 @@ where
     fn configuration(&self) -> serde_json::Value {
         json!({
             "candidates": self.candidates(),
-            "voting_blocks": self.voter_pool().iter().map(|block| {
+            "voting_blocs": self.voting_blocs().iter().map(|bloc| {
                 json!({
-                    "preferences": format!("{:?}", block.preferences()),
-                    "strategy": format!("{:?}", block.strategy()),
-                    "members": block.members()
+                    "preferences": format!("{:?}", bloc.preferences()),
+                    "strategy": format!("{:?}", bloc.strategy()),
+                    "members": bloc.members()
                 })
             }).collect::<Vec<_>>(),
             "method": format!("{:?}", self.method()) // only need the name
         })
     }
-    fn outcomes<O: Outcome>(self, outcomes: Vec<O>) -> serde_json::Value {
+    pub fn outcomes<O: Outcome>(self, outcomes: impl IntoIterator<Item = O>) -> serde_json::Value {
         let tabulated = self.tabulate(outcomes);
         tabulated
             .iter()

@@ -18,11 +18,7 @@ impl Method for STV {
     type Ballot = Ordinal;
     type Winner = MultiWinner;
 
-    fn outcome(
-        &self,
-        candidate_pool: &[Candidate],
-        profile: Profile<Self::Ballot>,
-    ) -> Self::Winner {
+    fn outcome(&self, candidates: &[Candidate], profile: Profile<Self::Ballot>) -> Self::Winner {
         let mut ballots: Vec<Self::Ballot> = profile.into_iter().collect();
         let mut winners = HashSet::new();
         let droop_quota = ballots.len() / (self.seats + 1) + 1;
@@ -57,7 +53,7 @@ impl Method for STV {
         MultiWinner::Elected(
             winners
                 .into_iter()
-                .filter_map(|id| candidate_pool.iter().find(|c| c.id() == id).cloned())
+                .filter_map(|id| candidates.iter().find(|c| c.id() == id).cloned())
                 .collect(),
         )
     }

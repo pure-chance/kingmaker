@@ -27,7 +27,7 @@ serde_json = "1.0.140"
 polars = { version = "0.46.0", optional = true }
 
 [features]
-default = ["visualize"]
+default = []
 visualize = ["dep:polars"]
 
 [dev-dependencies]

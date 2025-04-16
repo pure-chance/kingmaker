@@ -9,11 +9,7 @@ pub struct Approval;
 impl Method for Approval {
     type Ballot = Nominal;
     type Winner = SingleWinner;
-    fn outcome(
-        &self,
-        candidate_pool: &[Candidate],
-        profile: Profile<Self::Ballot>,
-    ) -> Self::Winner {
+    fn outcome(&self, candidates: &[Candidate], profile: Profile<Self::Ballot>) -> Self::Winner {
         let mut approval_counts: HashMap<Id, usize> = HashMap::with_capacity(profile.len());
         (0..profile.len()).for_each(|i| {
             for candidate in profile[i].iter() {
@@ -28,8 +24,8 @@ impl Method for Approval {
             .collect();
         match winners.len() {
             0 => SingleWinner::none(),
-            1 => SingleWinner::win(candidate_pool, winners[0]),
-            _ => SingleWinner::tie(candidate_pool, &winners),
+            1 => SingleWinner::win(candidates, winners[0]),
+            _ => SingleWinner::tie(candidates, &winners),
         }
     }
 }

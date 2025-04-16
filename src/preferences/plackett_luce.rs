@@ -38,9 +38,9 @@ impl PlackettLuce {
 }
 
 impl Preference<Ordinal> for PlackettLuce {
-    fn draw(&self, candidate_pool: &[Candidate], rng: &mut StdRng) -> Ordinal {
+    fn draw(&self, candidates: &[Candidate], rng: &mut StdRng) -> Ordinal {
         let mut weights = self.weights.clone();
-        let mut ballot = Vec::with_capacity(candidate_pool.len());
+        let mut ballot = Vec::with_capacity(candidates.len());
         while !weights.is_empty() {
             let sampled_id = WeightedIndex::new(weights.iter().map(|(_, w)| w))
                 .unwrap()

@@ -20,7 +20,7 @@ mod tests {
     use crate::prelude::{methods::*, *};
     use std::collections::{BTreeMap, BTreeSet};
 
-    fn candidate_pool() -> Vec<Candidate> {
+    fn candidates() -> Vec<Candidate> {
         vec![
             Candidate::new(0, "A", Some("DEM"), None),
             Candidate::new(1, "B", Some("REP"), None),
@@ -64,57 +64,57 @@ mod tests {
 
     #[test]
     fn random_dictator_outcome() {
-        let candidate_pool = candidate_pool();
+        let candidates = candidates();
         let ballots: Profile<Ordinal> = ordinal_ballots();
-        let outcome = RandomDictator.outcome(&candidate_pool, ballots);
-        assert_eq!(outcome, SingleWinner::win(&candidate_pool, 0));
+        let outcome = RandomDictator.outcome(&candidates, ballots);
+        assert_eq!(outcome, SingleWinner::win(&candidates, 0));
     }
 
     #[test]
     fn plurality_outcome() {
-        let candidate_pool = candidate_pool();
+        let candidates = candidates();
         let ballots = ordinal_ballots();
-        let outcome = Plurality.outcome(&candidate_pool, ballots);
-        assert_eq!(outcome, SingleWinner::win(&candidate_pool, 2));
+        let outcome = Plurality.outcome(&candidates, ballots);
+        assert_eq!(outcome, SingleWinner::win(&candidates, 2));
     }
 
     #[test]
     fn approval_outcome() {
-        let candidate_pool = candidate_pool();
+        let candidates = candidates();
         let ballots = nominal_ballots();
-        let outcome = Approval.outcome(&candidate_pool, ballots);
-        assert_eq!(outcome, SingleWinner::win(&candidate_pool, 1));
+        let outcome = Approval.outcome(&candidates, ballots);
+        assert_eq!(outcome, SingleWinner::win(&candidates, 1));
     }
 
     #[test]
     fn borda_outcome() {
-        let candidate_pool = candidate_pool();
+        let candidates = candidates();
         let ballots = ordinal_ballots();
-        let outcome = Borda.outcome(&candidate_pool, ballots);
-        assert_eq!(outcome, SingleWinner::tie(&candidate_pool, &[0, 1, 2]));
+        let outcome = Borda.outcome(&candidates, ballots);
+        assert_eq!(outcome, SingleWinner::tie(&candidates, &[0, 1, 2]));
     }
 
     #[test]
     fn star_outcome() {
-        let candidate_pool = candidate_pool();
+        let candidates = candidates();
         let ballots = cardinal_ballots();
-        let outcome = Star.outcome(&candidate_pool, ballots);
-        assert_eq!(outcome, SingleWinner::win(&candidate_pool, 0));
+        let outcome = Star.outcome(&candidates, ballots);
+        assert_eq!(outcome, SingleWinner::win(&candidates, 0));
     }
 
     #[test]
     fn instant_runoff_outcome() {
-        let candidate_pool = candidate_pool();
+        let candidates = candidates();
         let ballots = ordinal_ballots();
-        let outcome = IRV.outcome(&candidate_pool, ballots);
-        assert_eq!(outcome, SingleWinner::tie(&candidate_pool, &[0, 2]));
+        let outcome = IRV.outcome(&candidates, ballots);
+        assert_eq!(outcome, SingleWinner::tie(&candidates, &[0, 2]));
     }
 
     #[test]
     fn single_transferable_vote_outcome() {
-        let candidate_pool = candidate_pool();
+        let candidates = candidates();
         let ballots = ordinal_ballots();
-        let outcome = STV::new(2).outcome(&candidate_pool, ballots);
-        assert_eq!(outcome, MultiWinner::seats(&candidate_pool, &[1, 2]));
+        let outcome = STV::new(2).outcome(&candidates, ballots);
+        assert_eq!(outcome, MultiWinner::seats(&candidates, &[1, 2]));
     }
 }

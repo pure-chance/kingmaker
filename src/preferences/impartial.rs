@@ -38,10 +38,10 @@ impl Default for Impartial {
 }
 
 impl Preference<Cardinal> for Impartial {
-    fn draw(&self, candidate_pool: &[Candidate], rng: &mut StdRng) -> Cardinal {
+    fn draw(&self, candidates: &[Candidate], rng: &mut StdRng) -> Cardinal {
         const RANGE: usize = 5;
         Cardinal(
-            candidate_pool
+            candidates
                 .iter()
                 .map(|candidate| (candidate.id() as Id, rng.random_range(0..=RANGE)))
                 .collect(),
@@ -49,9 +49,9 @@ impl Preference<Cardinal> for Impartial {
     }
 }
 impl Preference<Ordinal> for Impartial {
-    fn draw(&self, candidate_pool: &[Candidate], rng: &mut StdRng) -> Ordinal {
+    fn draw(&self, candidates: &[Candidate], rng: &mut StdRng) -> Ordinal {
         Ordinal({
-            let mut points: Vec<(Id, f32)> = candidate_pool
+            let mut points: Vec<(Id, f32)> = candidates
                 .iter()
                 .map(|candidate| (candidate.id() as Id, rng.random_range(0.0..1.0)))
                 .collect();
@@ -62,9 +62,9 @@ impl Preference<Ordinal> for Impartial {
 }
 
 impl Preference<Nominal> for Impartial {
-    fn draw(&self, candidate_pool: &[Candidate], rng: &mut StdRng) -> Nominal {
+    fn draw(&self, candidates: &[Candidate], rng: &mut StdRng) -> Nominal {
         Nominal(
-            candidate_pool
+            candidates
                 .iter()
                 .filter(|_| rng.random_bool(0.5))
                 .map(|candidate| candidate.id())

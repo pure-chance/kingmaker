@@ -17,7 +17,7 @@ mod tests {
     };
     use rand::{SeedableRng, rngs::StdRng};
 
-    fn candidate_pool() -> Vec<Candidate> {
+    fn candidates() -> Vec<Candidate> {
         vec![
             Candidate::new(0, "A", Some("DEM"), None),
             Candidate::new(1, "B", Some("REP"), None),
@@ -27,16 +27,16 @@ mod tests {
 
     #[test]
     fn impartial_profile() {
-        let candidate_pool = candidate_pool();
+        let candidates = candidates();
         let impartial = Impartial;
         let mut rng = StdRng::seed_from_u64(0);
-        let profile: Profile<Ordinal> = impartial.sample(&candidate_pool, 100, &mut rng);
+        let profile: Profile<Ordinal> = impartial.sample(&candidates, 100, &mut rng);
         assert_eq!(profile.len(), 100);
     }
 
     #[test]
     fn manual_profile() {
-        let candidate_pool = candidate_pool();
+        let candidates = candidates();
         let profile: Profile<Ordinal> = vec![
             Ordinal(vec![0, 1, 2]),
             Ordinal(vec![1, 2, 0]),
@@ -47,26 +47,26 @@ mod tests {
         .into();
         let manual = Manual::new(profile);
         let mut rng = StdRng::seed_from_u64(0);
-        let profile: Profile<Ordinal> = manual.sample(&candidate_pool, 100, &mut rng);
+        let profile: Profile<Ordinal> = manual.sample(&candidates, 100, &mut rng);
         assert_eq!(profile.len(), 100);
     }
 
     #[test]
     fn plackett_luce_profile() {
-        let candidate_pool = candidate_pool();
+        let candidates = candidates();
         let weights = vec![(0, 1.0), (1, 1.1), (2, 1.0)];
         let plackett_luce = PlackettLuce::new(weights);
         let mut rng = StdRng::seed_from_u64(0);
-        let profile: Profile<Ordinal> = plackett_luce.sample(&candidate_pool, 100, &mut rng);
+        let profile: Profile<Ordinal> = plackett_luce.sample(&candidates, 100, &mut rng);
         assert_eq!(profile.len(), 100);
     }
 
     #[test]
     fn mallows_profile() {
-        let candidate_pool = candidate_pool();
+        let candidates = candidates();
         let mallows = Mallows::new(vec![0, 1, 2], 0.5);
         let mut rng = StdRng::seed_from_u64(0);
-        let profile: Profile<Ordinal> = mallows.sample(&candidate_pool, 100, &mut rng);
+        let profile: Profile<Ordinal> = mallows.sample(&candidates, 100, &mut rng);
         assert_eq!(profile.len(), 100);
     }
 }

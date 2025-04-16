@@ -6,7 +6,7 @@ pub fn preference_benchmarks(c: &mut Criterion) {
     let mut group = c.benchmark_group("preferences");
     const VOTER_COUNT: usize = 1_000;
 
-    let candidate_pool = vec![
+    let candidates = vec![
         Candidate::new(0, "A", Some("DEM"), None),
         Candidate::new(1, "B", Some("REP"), None),
         Candidate::new(2, "C", None, None),
@@ -16,8 +16,7 @@ pub fn preference_benchmarks(c: &mut Criterion) {
     group.bench_function("impartial", |b| {
         b.iter(|| {
             let impartial = Impartial;
-            let _ballots: Profile<Cardinal> =
-                impartial.sample(&candidate_pool, VOTER_COUNT, &mut rng);
+            let _ballots: Profile<Cardinal> = impartial.sample(&candidates, VOTER_COUNT, &mut rng);
         })
     });
 
@@ -30,7 +29,7 @@ pub fn preference_benchmarks(c: &mut Criterion) {
             ]
             .into();
             let manual = Manual::new(ballots);
-            let _ballots: Profile<Ordinal> = manual.sample(&candidate_pool, VOTER_COUNT, &mut rng);
+            let _ballots: Profile<Ordinal> = manual.sample(&candidates, VOTER_COUNT, &mut rng);
         })
     });
 
@@ -38,14 +37,14 @@ pub fn preference_benchmarks(c: &mut Criterion) {
         b.iter(|| {
             let plackett_luce = PlackettLuce::new(vec![(0, 1.0), (1, 1.0), (2, 1.0)]);
             let _ballots: Profile<Ordinal> =
-                plackett_luce.sample(&candidate_pool, VOTER_COUNT, &mut rng);
+                plackett_luce.sample(&candidates, VOTER_COUNT, &mut rng);
         })
     });
 
     group.bench_function("mallows", |b| {
         b.iter(|| {
             let mallows = Mallows::new(vec![0, 1, 2], 0.5);
-            let _ballots: Profile<Ordinal> = mallows.sample(&candidate_pool, VOTER_COUNT, &mut rng);
+            let _ballots: Profile<Ordinal> = mallows.sample(&candidates, VOTER_COUNT, &mut rng);
         })
     });
 }

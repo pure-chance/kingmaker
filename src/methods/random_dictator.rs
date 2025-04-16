@@ -7,15 +7,11 @@ pub struct RandomDictator;
 impl Method for RandomDictator {
     type Ballot = Ordinal;
     type Winner = SingleWinner;
-    fn outcome(
-        &self,
-        candidate_pool: &[Candidate],
-        profile: Profile<Self::Ballot>,
-    ) -> Self::Winner {
+    fn outcome(&self, candidates: &[Candidate], profile: Profile<Self::Ballot>) -> Self::Winner {
         if profile.is_empty() {
             return SingleWinner::None;
         }
         let winner = profile[0][0];
-        SingleWinner::win(candidate_pool, winner)
+        SingleWinner::win(candidates, winner)
     }
 }

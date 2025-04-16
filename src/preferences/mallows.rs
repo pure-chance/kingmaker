@@ -36,9 +36,9 @@ impl Mallows {
 }
 
 impl Preference<Ordinal> for Mallows {
-    fn draw(&self, candidate_pool: &[Candidate], rng: &mut StdRng) -> Ordinal {
+    fn draw(&self, candidates: &[Candidate], rng: &mut StdRng) -> Ordinal {
         let distance = sample_kendall_tau_distance(self.pi_0.len(), self.phi, rng); // randomly sample a distance
-        let permutation = sample_permutation_with_k_inversions(candidate_pool.len(), distance, rng); // randomly sample a permutation with the sampled distance
+        let permutation = sample_permutation_with_k_inversions(candidates.len(), distance, rng); // randomly sample a permutation with the sampled distance
 
         let ranking: Vec<Id> = permutation.into_iter().map(|i| self.pi_0[i]).collect();
 
