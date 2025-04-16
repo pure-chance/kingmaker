@@ -1,9 +1,9 @@
 use std::collections::HashMap;
 
-use crate::core::*;
+use crate::core::{Candidate, Id, Method, Ordinal, Profile, SingleWinner};
 
 /// A single-winner, ranked voting method. The candidate with the fewest votes is eliminated in each round, and votes for the eliminated candidate are redistributed to the next preference. This process continues until one candidate has a majority.
-#[derive(Debug)]
+#[derive(Debug, Clone, serde::Serialize)]
 pub struct IRV;
 
 impl Method for IRV {

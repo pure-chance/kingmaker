@@ -4,28 +4,31 @@ use std::hash::Hash;
 
 use serde::Serialize;
 
-use super::{Candidate, Id};
+use crate::core::{Candidate, Id};
 
 /// The outcome of an election (single-winner or multi-winner)
-pub trait Outcome: Send + Sync + Serialize + Debug + Display + Eq {
+pub trait Outcome: Send + Sync + Clone + Serialize + Debug + Display + Eq + Hash {
+    /// Get the winners of the election
     fn winners(&self) -> Vec<&str>;
 }
+
 impl Outcome for SingleWinner {
     /// Get the winners of the single-winner election
     fn winners(&self) -> Vec<&str> {
         match self {
-            SingleWinner::Win(candidate) => vec![candidate.name()],
-            SingleWinner::Tie(candidates) => candidates.iter().map(|c| c.name()).collect(),
-            SingleWinner::None => vec![],
+            Self::Win(candidate) => vec![candidate.name()],
+            Self::Tie(candidates) => candidates.iter().map(Candidate::name).collect(),
+            Self::None => vec![],
         }
     }
 }
+
 impl Outcome for MultiWinner {
     /// Get the winners of the multi-winner election
     fn winners(&self) -> Vec<&str> {
         match self {
-            MultiWinner::Elected(candidates) => candidates.iter().map(|c| c.name()).collect(),
-            MultiWinner::None => vec![],
+            Self::Elected(candidates) => candidates.iter().map(Candidate::name).collect(),
+            Self::None => vec![],
         }
     }
 }
@@ -42,10 +45,18 @@ pub enum SingleWinner {
 }
 impl SingleWinner {
     /// Construct a `SingleWinner::Win()`
+    ///
+    /// # Panics
+    ///
+    /// Panics if the candidate with the given ID is not found in the list of candidates.
     pub fn win(candidates: &[Candidate], id: Id) -> Self {
         SingleWinner::Win(candidates.iter().find(|c| c.id() == id).unwrap().to_owned())
     }
     /// Construct a `SingleWinner::Tie()`
+    ///
+    /// # Panics
+    ///
+    /// Panics if any of the candidate IDs are not found in the list of candidates.
     pub fn tie(candidates: &[Candidate], ids: &[Id]) -> Self {
         SingleWinner::Tie(
             ids.iter()
@@ -76,8 +87,12 @@ pub enum MultiWinner {
 
 impl MultiWinner {
     /// Construct a `MultiWinner::Elected()`
+    ///
+    /// # Panics
+    ///
+    /// Panics if any of the ids do not correspond to a candidate.
     pub fn seats(candidates: &[Candidate], ids: &[Id]) -> Self {
-        MultiWinner::Elected(
+        Self::Elected(
             ids.iter()
                 .map(|id| {
                     candidates
@@ -91,7 +106,7 @@ impl MultiWinner {
     }
     /// Construct a `MultiWinner::None()`
     pub fn none() -> Self {
-        MultiWinner::None
+        Self::None
     }
 }
 
@@ -105,7 +120,7 @@ impl Display for SingleWinner {
                     "Tie({})",
                     candidates
                         .iter()
-                        .map(|c| c.name())
+                        .map(Candidate::name)
                         .collect::<Vec<_>>()
                         .join(", ")
                 )

@@ -1,3 +1,8 @@
+#![allow(clippy::must_use_candidate)]
+#![deny(missing_docs)]
+#![warn(clippy::pedantic)]
+#![warn(rust_2024_compatibility)]
+
 //! # Kingmaker
 //!
 //! Kingmaker is a modular, performant, social choice framework for the simulation, computation, and analysis of strategic voting. It has a focus on the study of strategic or tactical voting, which is concerned with questions such as:
@@ -42,6 +47,7 @@ pub mod methods;
 pub mod preferences;
 pub mod tactics;
 
+/// The kingmaker standard library. This includes all the core components and common preferences, tactics, and methods that tend to be used in real-world elections.
 pub mod prelude {
     pub use crate::core::*;
     pub use crate::methods;

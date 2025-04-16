@@ -1,4 +1,4 @@
-use crate::prelude::{Id, Ordinal, Tactic};
+use crate::core::{Id, Ordinal, Tactic};
 
 /// The compromise tactic places candidates that are more likely to win in ahead of the true voters preferences. The `Vec<Id>` specifies the electable candidates (in order), with the new ranking being `compromise + (ballot - compromise)`.
 #[derive(Debug)]

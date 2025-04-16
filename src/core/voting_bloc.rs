@@ -6,7 +6,7 @@ use rand::prelude::*;
 use crate::core::{Ballot, Candidate, Preference, Tactic};
 use crate::tactics::Identity;
 
-use super::Profile;
+use crate::core::Profile;
 
 /// A bloc of voters, e.g. democrats / republicans or rural / suburban / urban.
 ///
@@ -62,6 +62,10 @@ impl<B: Ballot> VotingBloc<B> {
     /// Realize preferences to a profile and apply strategy to them.
     ///
     /// In other words, make the voting bloc vote.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the weights are not valid.
     pub fn vote(&self, candidates: &[Candidate], rng: &mut StdRng) -> Profile<B> {
         let weights: Vec<f32> = self.strategy.iter().map(|(_, weight)| *weight).collect();
         let dist = WeightedIndex::new(&weights).expect("Weights should be valid");

@@ -1,9 +1,9 @@
 use std::collections::HashMap;
 
-use crate::core::*;
+use crate::core::{Candidate, Id, Method, Nominal, Profile, SingleWinner};
 
 /// A single-winner, nominal voting method. The winner is the candidate(s) with the most approvals.
-#[derive(Debug)]
+#[derive(Debug, Clone, serde::Serialize)]
 pub struct Approval;
 
 impl Method for Approval {

@@ -1,4 +1,4 @@
-use crate::core::*;
+use crate::core::{Candidate, Cardinal, Id, Nominal, Ordinal, Preference};
 
 use rand::{Rng, rngs::StdRng};
 use serde::Serialize;
@@ -26,6 +26,7 @@ use serde::Serialize;
 pub struct Impartial;
 
 impl Impartial {
+    /// Instantiates a new Impartial preference model.
     pub fn new() -> Self {
         Impartial
     }
@@ -67,7 +68,7 @@ impl Preference<Nominal> for Impartial {
             candidates
                 .iter()
                 .filter(|_| rng.random_bool(0.5))
-                .map(|candidate| candidate.id())
+                .map(Candidate::id)
                 .collect(),
         )
     }

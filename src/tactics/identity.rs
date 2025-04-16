@@ -1,4 +1,4 @@
-use crate::prelude::{Ballot, Tactic};
+use crate::core::{Ballot, Tactic};
 
 /// The identity tactic does nothing and returns the honest ballot.
 #[derive(Debug)]

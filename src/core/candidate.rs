@@ -1,5 +1,4 @@
 use ordered_float::NotNan;
-
 use serde::Serialize;
 
 use crate::core::Id;
@@ -23,6 +22,10 @@ pub struct Candidate {
 
 impl Candidate {
     /// Create a new candidate
+    ///
+    /// # Panics
+    ///
+    /// If any position entry is NaN, then a valid position cannot be instantiated, and the function will panic.
     pub fn new(id: Id, name: &str, party: Option<&str>, positions: Option<Vec<f32>>) -> Self {
         let positions = positions.map(|positions| {
             positions
@@ -33,7 +36,7 @@ impl Candidate {
         Self {
             id,
             name: name.to_string(),
-            party: party.map(|p| p.to_string()),
+            party: party.map(str::to_owned),
             positions,
         }
     }
@@ -42,14 +45,17 @@ impl Candidate {
         self.id
     }
     /// The name of the candidate
+    #[allow(clippy::missing_const_for_fn)]
     pub fn name(&self) -> &str {
         &self.name
     }
     /// The party the candidate is associated with
+    #[allow(clippy::missing_const_for_fn)]
     pub fn party(&self) -> Option<&str> {
         self.party.as_deref()
     }
     /// The positions that the candidate holds
+    #[allow(clippy::missing_const_for_fn)]
     pub fn positions(&self) -> Option<&Vec<NotNan<f32>>> {
         self.positions.as_ref()
     }

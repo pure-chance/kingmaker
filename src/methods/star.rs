@@ -1,9 +1,9 @@
 use std::collections::HashMap;
 
-use crate::core::*;
+use crate::core::{Candidate, Cardinal, Id, Method, Profile, SingleWinner};
 
 /// A single-winner, cardinal voting method. The two candidates with the highest scores advance to a runoff, where the candidate with the most votes in the runoff wins.
-#[derive(Debug)]
+#[derive(Debug, Clone, serde::Serialize)]
 pub struct Star;
 
 impl Method for Star {
@@ -13,8 +13,8 @@ impl Method for Star {
         // score candidates
         let mut tally: HashMap<Id, usize> = HashMap::with_capacity(profile.len());
         for ballot in profile.iter() {
-            for (id, score) in ballot.0.iter() {
-                *tally.entry(*id).or_insert(0) += *score;
+            for (id, score) in &ballot.0 {
+                *tally.entry(*id).or_insert(0) += score;
             }
         }
         // find top 2 candidates
@@ -34,8 +34,8 @@ impl Method for Star {
                     let score1 = preference.0.get(c1).unwrap();
                     let score2 = preference.0.get(c2).unwrap();
                     (
-                        c1_tally + (score1 > score2) as usize,
-                        c2_tally + (score2 > score1) as usize,
+                        c1_tally + usize::from(score1 > score2),
+                        c2_tally + usize::from(score2 > score1),
                     )
                 });
         let winners = match (c1_tally, c2_tally) {

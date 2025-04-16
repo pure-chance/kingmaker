@@ -1,12 +1,12 @@
 use std::collections::{BTreeMap, BTreeSet};
 use std::fmt::Debug;
-use std::ops::{Deref, Index};
+use std::ops::Deref;
 use std::slice::Iter;
 
 use derive_more::{Deref, DerefMut, From};
 use serde::Serialize;
 
-use super::Id;
+use crate::core::Id;
 
 /// A ballot type that can be cast in an election. A ballot is an expression of a voter's preferences. There are three ballot types: `Nominal`, `Ordinal`, and `Cardinal`.
 pub trait Ballot: Debug + Deref + Send + Sync + Clone + Serialize {}
@@ -37,19 +37,16 @@ pub struct Profile<B: Ballot>(Box<[B]>);
 impl<B: Ballot> Profile<B> {
     /// Create a new Profile from a slice
     pub fn new(items: impl IntoIterator<Item = B>) -> Self {
-        Profile(Box::from(items.into_iter().collect::<Vec<_>>()))
+        Self(Box::from(items.into_iter().collect::<Vec<_>>()))
     }
-
     /// Return an iterator over the elements
     pub fn iter(&self) -> Iter<'_, B> {
         self.0.iter()
     }
-
     /// Return the number of elements
     pub fn len(&self) -> usize {
         self.0.len()
     }
-
     /// Check if the profile is empty
     pub fn is_empty(&self) -> bool {
         self.0.is_empty()
@@ -64,17 +61,9 @@ impl<B: Ballot> Deref for Profile<B> {
     }
 }
 
-impl<B: Ballot> Index<usize> for Profile<B> {
-    type Output = B;
-
-    fn index(&self, index: usize) -> &Self::Output {
-        &self.0[index]
-    }
-}
-
 impl<B: Ballot> From<Vec<B>> for Profile<B> {
-    fn from(ballots: Vec<B>) -> Profile<B> {
-        Profile(Box::from(ballots))
+    fn from(ballots: Vec<B>) -> Self {
+        Self(Box::from(ballots))
     }
 }
 
@@ -90,17 +79,17 @@ impl<'a, B: Ballot> IntoIterator for &'a Profile<B> {
 impl<B: Ballot> FromIterator<B> for Profile<B> {
     fn from_iter<T: IntoIterator<Item = B>>(iter: T) -> Self {
         let all_ballots: Vec<B> = iter.into_iter().collect();
-        Profile(all_ballots.into_boxed_slice())
+        Self(all_ballots.into_boxed_slice())
     }
 }
 
-impl<B: Ballot> FromIterator<Profile<B>> for Profile<B> {
-    fn from_iter<T: IntoIterator<Item = Profile<B>>>(iter: T) -> Self {
+impl<B: Ballot> FromIterator<Self> for Profile<B> {
+    fn from_iter<T: IntoIterator<Item = Self>>(iter: T) -> Self {
         let all_ballots: Vec<B> = iter
             .into_iter()
             .flat_map(|profile| profile.0.into_vec())
             .collect();
 
-        Profile(all_ballots.into_boxed_slice())
+        Self(all_ballots.into_boxed_slice())
     }
 }

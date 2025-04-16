@@ -1,14 +1,15 @@
 use std::collections::{BTreeMap, HashSet};
 
-use crate::core::*;
+use crate::core::{Candidate, Id, Method, MultiWinner, Ordinal, Profile};
 
 /// A multi-winner, ranked voting method. Candidates with the fewest votes are eliminated in each round, and their votes are transferred to the next preference. This process continues until candidates achieve a required quota or all positions are filled.
-#[derive(Debug)]
+#[derive(Debug, Clone, serde::Serialize)]
 pub struct STV {
     seats: usize,
 }
 
 impl STV {
+    /// Creates a new instance of STV with the specified number of seats.
     pub fn new(seats: usize) -> Self {
         Self { seats }
     }

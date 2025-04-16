@@ -1,4 +1,4 @@
-use crate::core::*;
+use crate::core::{Candidate, Id, Ordinal, Preference};
 
 use rand::{distr::weighted::WeightedIndex, prelude::*, rngs::StdRng};
 use serde::Serialize;
@@ -30,6 +30,7 @@ pub struct Mallows {
 }
 
 impl Mallows {
+    /// Instantiates a new Mallows preference model.
     pub fn new(pi_0: Vec<Id>, phi: f64) -> Self {
         Self { pi_0, phi }
     }
@@ -107,9 +108,9 @@ fn decomposition_to_permutation(v: &[usize]) -> Vec<usize> {
 fn get_permutations(n: usize, k: usize) -> usize {
     if n == 0 {
         return 0;
-    };
+    }
     if k == 0 {
         return 1;
-    };
+    }
     (0..=k.min(n - 1)).fold(0, |acc, i| acc + get_permutations(n - 1, k - i))
 }

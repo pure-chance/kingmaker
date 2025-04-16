@@ -1,9 +1,9 @@
 use std::collections::HashMap;
 
-use crate::core::*;
+use crate::core::{Candidate, Id, Method, Ordinal, Profile, SingleWinner};
 
 /// A single-winner, ranked voting method. Each rank (in the ballot) is given a value corresponding to its order. With n candidates, 1st is `n-1`, 2nd is `n-2`, and so on, with last having a value of `0`. The candidate whose sum of ranks is highest is the winner.
-#[derive(Debug)]
+#[derive(Debug, Clone, serde::Serialize)]
 pub struct Borda;
 
 impl Method for Borda {

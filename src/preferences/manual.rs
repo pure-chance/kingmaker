@@ -1,4 +1,4 @@
-use crate::core::*;
+use crate::core::{Ballot, Candidate, Preference, Profile};
 
 use rand::{Rng, rngs::StdRng};
 use serde::Serialize;
@@ -30,6 +30,7 @@ pub struct Manual<B: Ballot> {
 }
 
 impl<B: Ballot> Manual<B> {
+    /// Instantiates a new Manual preference model.
     pub fn new(profile: Profile<B>) -> Self {
         Manual { votes: profile }
     }
