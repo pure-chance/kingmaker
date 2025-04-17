@@ -33,7 +33,7 @@ pub fn tactics_benchmarks(c: &mut Criterion) {
             let _strategic_ballots: Profile<<Plurality as Method>::Ballot> = ordinal_ballots
                 .clone()
                 .into_iter()
-                .map(|ballot| Compromise(vec![0]).apply(ballot))
+                .map(|ballot| Compromise::new(vec![0]).apply(ballot))
                 .collect::<Vec<_>>()
                 .into();
         })
@@ -44,7 +44,7 @@ pub fn tactics_benchmarks(c: &mut Criterion) {
             let _strategic_ballots: Profile<<Plurality as Method>::Ballot> = ordinal_ballots
                 .clone()
                 .into_iter()
-                .map(|ballot| Burial(vec![0]).apply(ballot))
+                .map(|ballot| Burial::new(vec![0]).apply(ballot))
                 .collect::<Vec<_>>()
                 .into();
         })

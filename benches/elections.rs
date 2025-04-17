@@ -4,9 +4,9 @@ use kingmaker::prelude::*;
 pub fn election_benchmarks(c: &mut Criterion) {
     let mut group = c.benchmark_group("election");
 
-    fn election_setup() -> Election<Ordinal, methods::Plurality> {
+    fn election_setup() -> Election<3, 1, Ordinal, methods::Plurality> {
         // configure election
-        let candidates = vec![
+        let candidates = [
             Candidate::new(0, "A", Some("DEM"), None),
             Candidate::new(1, "B", Some("REP"), None),
             Candidate::new(2, "C", None, None),

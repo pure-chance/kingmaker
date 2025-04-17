@@ -13,9 +13,9 @@ pub struct Candidate {
     /// Exists to make inputting manual ballots easier (Id instead of a name)
     id: Id,
     /// The name of the candidate
-    name: String,
+    name: &'static str,
     /// The party the candidate is associated with
-    party: Option<String>,
+    party: Option<&'static str>,
     /// The positions the candidate holds
     positions: Option<Vec<NotNan<f32>>>,
 }
@@ -26,7 +26,13 @@ impl Candidate {
     /// # Panics
     ///
     /// If any position entry is NaN, then a valid position cannot be instantiated, and the function will panic.
-    pub fn new(id: Id, name: &str, party: Option<&str>, positions: Option<Vec<f32>>) -> Self {
+    #[must_use]
+    pub fn new(
+        id: Id,
+        name: &'static str,
+        party: Option<&'static str>,
+        positions: Option<Vec<f32>>,
+    ) -> Self {
         let positions = positions.map(|positions| {
             positions
                 .into_iter()
@@ -35,28 +41,29 @@ impl Candidate {
         });
         Self {
             id,
-            name: name.to_string(),
-            party: party.map(str::to_owned),
+            name,
+            party,
             positions,
         }
     }
     /// The id of the candidate
-    pub fn id(&self) -> Id {
+    #[must_use]
+    pub const fn id(&self) -> Id {
         self.id
     }
     /// The name of the candidate
-    #[allow(clippy::missing_const_for_fn)]
-    pub fn name(&self) -> &str {
-        &self.name
+    #[must_use]
+    pub const fn name(&self) -> &str {
+        self.name
     }
     /// The party the candidate is associated with
-    #[allow(clippy::missing_const_for_fn)]
-    pub fn party(&self) -> Option<&str> {
-        self.party.as_deref()
+    #[must_use]
+    pub const fn party(&self) -> Option<&str> {
+        self.party
     }
     /// The positions that the candidate holds
-    #[allow(clippy::missing_const_for_fn)]
-    pub fn positions(&self) -> Option<&Vec<NotNan<f32>>> {
-        self.positions.as_ref()
+    #[must_use]
+    pub fn positions(&self) -> Option<Vec<NotNan<f32>>> {
+        self.positions.clone()
     }
 }

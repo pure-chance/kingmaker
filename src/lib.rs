@@ -1,7 +1,7 @@
-#![allow(clippy::must_use_candidate)]
-#![deny(missing_docs)]
+#![warn(clippy::all)]
 #![warn(clippy::pedantic)]
-#![warn(rust_2024_compatibility)]
+#![warn(clippy::nursery)]
+#![warn(clippy::cargo)]
 
 //! # Kingmaker
 //!

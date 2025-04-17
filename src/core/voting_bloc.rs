@@ -42,15 +42,18 @@ impl<B: Ballot> VotingBloc<B> {
         }
     }
     /// Get the preferences of the voting bloc
+    #[must_use]
     pub fn preferences(&self) -> Arc<dyn Preference<B>> {
         self.preference.clone()
     }
     /// Get the preferences of the voting bloc
+    #[must_use]
     pub fn strategy(&self) -> &[(Arc<dyn Tactic<B>>, f32)] {
         &self.strategy
     }
     /// Get the # of members in the voting bloc
-    pub fn members(&self) -> usize {
+    #[must_use]
+    pub const fn members(&self) -> usize {
         self.members
     }
     /// Realize preferences to a profile

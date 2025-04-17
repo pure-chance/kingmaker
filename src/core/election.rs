@@ -8,43 +8,43 @@ use crate::core::{Ballot, Candidate, Method, Outcome, Profile, VotingBloc};
 
 /// An election is a simulation of the voting process. It is constructed with a set of conditions, a set of candidates, a set of voting blocs, and a method for determining the winner.
 #[derive(Debug)]
-pub struct Election<B, M>
+pub struct Election<const N: usize, const V: usize, B, M>
 where
     B: Ballot,
     M: Method<Ballot = B>,
 {
-    candidates: Vec<Candidate>,
-    voting_blocs: Vec<VotingBloc<B>>,
+    candidates: [Candidate; N],
+    voting_blocs: [VotingBloc<B>; V],
     method: M,
 }
 
-impl<B, M> Election<B, M>
+impl<const N: usize, const V: usize, B, M> Election<N, V, B, M>
 where
     B: Ballot,
     M: Method<Ballot = B>,
 {
     /// Creates a new election configuration.
-    pub fn new(
-        candidates: impl IntoIterator<Item = Candidate>,
-        voting_blocs: impl IntoIterator<Item = VotingBloc<B>>,
+    pub const fn new(
+        candidates: [Candidate; N],
+        voting_blocs: [VotingBloc<B>; V],
         method: M,
     ) -> Self {
         Self {
-            candidates: candidates.into_iter().collect(),
-            voting_blocs: voting_blocs.into_iter().collect(),
+            candidates,
+            voting_blocs,
             method,
         }
     }
     /// Get the candidates up for election.
-    pub fn candidates(&self) -> &[Candidate] {
+    pub const fn candidates(&self) -> &[Candidate] {
         &self.candidates
     }
     /// Get the voting blocs
-    pub fn voting_blocs(&self) -> &[VotingBloc<B>] {
+    pub const fn voting_blocs(&self) -> &[VotingBloc<B>] {
         &self.voting_blocs
     }
     /// Get the method used to determine the winner of the election.
-    pub fn method(&self) -> &M {
+    pub const fn method(&self) -> &M {
         &self.method
     }
     /// Realizes the preferences of the voters into an honest Profile.
@@ -64,13 +64,13 @@ where
             .collect::<Profile<B>>()
     }
     /// Run a single election with the given configuration
-    pub fn run_once(&self, seed: u64) -> impl Outcome + use<B, M> {
+    pub fn run_once(&self, seed: u64) -> impl Outcome + use<N, V, B, M> {
         let mut rng = StdRng::seed_from_u64(seed);
         let profile: Profile<B> = self.vote(&mut rng);
         self.method().outcome(self.candidates(), profile)
     }
     /// Run many elections with the given configuration
-    pub fn run_many(&self, iterations: usize, seed: u64) -> Vec<impl Outcome + use<B, M>> {
+    pub fn run_many(&self, iterations: usize, seed: u64) -> Vec<impl Outcome + use<N, V, B, M>> {
         let mut rng = StdRng::seed_from_u64(seed);
         (0..iterations)
             .map(|_| rng.random())
@@ -97,10 +97,10 @@ where
     }
 }
 
-impl<B, M> Election<B, M>
+impl<const N: usize, const V: usize, B, M> Election<N, V, B, M>
 where
     B: Ballot,
-    M: Method<Ballot = B> + std::fmt::Debug,
+    M: Method<Ballot = B>,
 {
     /// Visualizes the tabulated outcomes of the elections in a `DataFrame`.
     ///

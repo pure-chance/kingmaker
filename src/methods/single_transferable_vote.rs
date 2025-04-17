@@ -10,7 +10,8 @@ pub struct STV {
 
 impl STV {
     /// Creates a new instance of STV with the specified number of seats.
-    pub fn new(seats: usize) -> Self {
+    #[must_use]
+    pub const fn new(seats: usize) -> Self {
         Self { seats }
     }
 }

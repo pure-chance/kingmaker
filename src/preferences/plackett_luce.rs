@@ -35,7 +35,8 @@ pub struct PlackettLuce {
 
 impl PlackettLuce {
     /// Instantiates a new Plackett-Luce preference model.
-    pub fn new(weights: Vec<(Id, f32)>) -> Self {
+    #[must_use]
+    pub const fn new(weights: Vec<(Id, f32)>) -> Self {
         Self { weights }
     }
 }

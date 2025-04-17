@@ -11,7 +11,8 @@ pub struct Pushover {
 
 impl Pushover {
     /// Instantiates a new Pushover tactic.
-    pub fn new(preferred: Vec<Id>, pushover: Vec<Id>) -> Self {
+    #[must_use]
+    pub const fn new(preferred: Vec<Id>, pushover: Vec<Id>) -> Self {
         Self {
             preferred,
             pushover,

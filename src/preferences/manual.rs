@@ -31,8 +31,9 @@ pub struct Manual<B: Ballot> {
 
 impl<B: Ballot> Manual<B> {
     /// Instantiates a new Manual preference model.
-    pub fn new(profile: Profile<B>) -> Self {
-        Manual { votes: profile }
+    #[must_use]
+    pub const fn new(profile: Profile<B>) -> Self {
+        Self { votes: profile }
     }
 }
 

@@ -27,8 +27,9 @@ pub struct Impartial;
 
 impl Impartial {
     /// Instantiates a new Impartial preference model.
-    pub fn new() -> Self {
-        Impartial
+    #[must_use]
+    pub const fn new() -> Self {
+        Self
     }
 }
 

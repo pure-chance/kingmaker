@@ -26,14 +26,14 @@ mod tests {
 
     #[test]
     fn compromise_tactic() {
-        let compromise = Compromise(vec![2]);
+        let compromise = Compromise::new(vec![2]);
         let ordinal = Ordinal(vec![0, 2, 1]);
         assert_eq!(compromise.apply(ordinal), Ordinal(vec![2, 0, 1]));
     }
 
     #[test]
     fn burial_tactic() {
-        let burial = Burial(vec![2]);
+        let burial = Burial::new(vec![2]);
         let ordinal = Ordinal(vec![0, 2, 1]);
         assert_eq!(burial.apply(ordinal), Ordinal(vec![0, 1, 2]));
     }

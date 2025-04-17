@@ -49,16 +49,18 @@ impl SingleWinner {
     /// # Panics
     ///
     /// Panics if the candidate with the given ID is not found in the list of candidates.
+    #[must_use]
     pub fn win(candidates: &[Candidate], id: Id) -> Self {
-        SingleWinner::Win(candidates.iter().find(|c| c.id() == id).unwrap().to_owned())
+        Self::Win(candidates.iter().find(|c| c.id() == id).unwrap().to_owned())
     }
     /// Construct a `SingleWinner::Tie()`
     ///
     /// # Panics
     ///
     /// Panics if any of the candidate IDs are not found in the list of candidates.
+    #[must_use]
     pub fn tie(candidates: &[Candidate], ids: &[Id]) -> Self {
-        SingleWinner::Tie(
+        Self::Tie(
             ids.iter()
                 .map(|id| {
                     candidates
@@ -71,8 +73,9 @@ impl SingleWinner {
         )
     }
     /// Construct a `SingleWinner::None()`
-    pub fn none() -> Self {
-        SingleWinner::None
+    #[must_use]
+    pub const fn none() -> Self {
+        Self::None
     }
 }
 
@@ -91,6 +94,7 @@ impl MultiWinner {
     /// # Panics
     ///
     /// Panics if any of the ids do not correspond to a candidate.
+    #[must_use]
     pub fn seats(candidates: &[Candidate], ids: &[Id]) -> Self {
         Self::Elected(
             ids.iter()
@@ -105,7 +109,8 @@ impl MultiWinner {
         )
     }
     /// Construct a `MultiWinner::None()`
-    pub fn none() -> Self {
+    #[must_use]
+    pub const fn none() -> Self {
         Self::None
     }
 }
@@ -113,8 +118,8 @@ impl MultiWinner {
 impl Display for SingleWinner {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            SingleWinner::Win(candidate) => write!(f, "Win({})", candidate.name()),
-            SingleWinner::Tie(candidates) => {
+            Self::Win(candidate) => write!(f, "Win({})", candidate.name()),
+            Self::Tie(candidates) => {
                 write!(
                     f,
                     "Tie({})",
@@ -125,7 +130,7 @@ impl Display for SingleWinner {
                         .join(", ")
                 )
             }
-            SingleWinner::None => write!(f, "None"),
+            Self::None => write!(f, "None"),
         }
     }
 }
@@ -133,7 +138,7 @@ impl Display for SingleWinner {
 impl Display for MultiWinner {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            MultiWinner::Elected(candidates) => {
+            Self::Elected(candidates) => {
                 write!(
                     f,
                     "MultiWinner({})",
@@ -144,7 +149,7 @@ impl Display for MultiWinner {
                         .join(", ")
                 )
             }
-            MultiWinner::None => write!(f, "MultiWinner(None)"),
+            Self::None => write!(f, "MultiWinner(None)"),
         }
     }
 }

@@ -13,19 +13,19 @@ pub trait Ballot: Debug + Deref + Send + Sync + Clone + Serialize {}
 
 /// Approval ballot: A set of approved candidates
 #[repr(transparent)]
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Deref, DerefMut, Serialize)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Deref, DerefMut, Serialize)]
 pub struct Nominal(pub BTreeSet<Id>);
 impl Ballot for Nominal {}
 
 /// Ranked ballot: An ordered list of candidates
 #[repr(transparent)]
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Deref, DerefMut, Serialize)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Deref, DerefMut, Serialize)]
 pub struct Ordinal(pub Vec<Id>);
 impl Ballot for Ordinal {}
 
 /// Score ballot: A map of candidates to scores
 #[repr(transparent)]
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Deref, DerefMut, Serialize)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Deref, DerefMut, Serialize)]
 pub struct Cardinal(pub BTreeMap<Id, usize>);
 impl Ballot for Cardinal {}
 
@@ -44,10 +44,12 @@ impl<B: Ballot> Profile<B> {
         self.0.iter()
     }
     /// Return the number of elements
+    #[must_use]
     pub fn len(&self) -> usize {
         self.0.len()
     }
     /// Check if the profile is empty
+    #[must_use]
     pub fn is_empty(&self) -> bool {
         self.0.is_empty()
     }
