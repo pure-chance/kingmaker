@@ -1,6 +1,6 @@
 [package]
 name = "kingmaker"
-version = "0.0.0"
+version = "0.1.0"
 edition = "2021"
 authors = ["Chance Addis <chance.h.addis@proton.me>"]
 description = "A modular, performant, social choice framework for the simulation, computation, and analysis of strategic voting."
@@ -12,6 +12,7 @@ keywords = [
     "computational social choice",
     "game theory",
 ]
+categories = ["mathematics", "science", "simulation"]
 readme = "README.md"
 license = "Apache-2.0 OR MIT"
 repository = "https://github.com/Approximately-Equal/kingmaker"
@@ -19,7 +20,7 @@ repository = "https://github.com/Approximately-Equal/kingmaker"
 [dependencies]
 derive_more = { version = "2.0.1", features = ["full"] }
 ordered-float = { version = "5.0.0", features = ["serde"] }
-rand = "0.9.0"
+rand = "0.9.1"
 rayon = "1.10.0"
 thiserror = "2.0.11"
 serde = { version = "1.0.219", features = ["derive"] }

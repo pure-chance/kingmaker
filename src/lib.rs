@@ -15,32 +15,37 @@
 //!
 //! ## Getting Started
 //!
-//! To get started with Kingmaker, just configure the election parameters and run the simulation. Here's a minimal example:
+//! To get started with Kingmaker, just configure the election parameters and run the simulation. Here's an example:
 //!
 //! ```rust
 //! use kingmaker::prelude::*;
 //!
-//! // configure election(s)
-//! let candidates = vec![
-//!     Candidate::new(0, "A", Some("DEM"), None),
-//!     Candidate::new(1, "A", Some("REP"), None),
-//!     Candidate::new(2, "C", None, None),
-//! ];
-//! let voting_blocs = [
-//!     VotingBloc::builder(preferences::Mallows::new(vec![0, 1, 2], 0.2), 5_000)
-//!         .add_tactic(tactics::Identity, 0.8)
-//!         .add_tactic(tactics::Burial(vec![1]), 0.2)
-//!         .build(),
-//!     VotingBloc::builder(preferences::Mallows::new(vec![2, 1, 0], 0.15), 5_000)
-//!         .add_tactic(tactics::Identity, 0.7)
-//!         .add_tactic(tactics::Burial(vec![1]), 0.3)
-//!         .build(),
-//! ];
-//! let election = Election::new(candidates, voting_blocs, methods::Plurality);
-//! // run election(s)
-//! let outcomes = election.run_many(1_000, 0);
-//! // display outcome
-//! election.display(outcomes);
+//! fn main() {
+//!     // configure election
+//!     let candidates = [
+//!         Candidate::new(0, "Alice", Some("DEM"), Default::default()),
+//!         Candidate::new(1, "Bliar", Some("REP"), Default::default()),
+//!         Candidate::new(2, "Cybil", None, Default::default()),
+//!     ];
+//!     let voting_blocks = [
+//!         VotingBloc::builder(preferences::Mallows::new(vec![0, 2, 1], 1.4), 40)
+//!             .add_tactic(tactics::Burial::new(vec![1]), 0.8) // Do not vote for the opposition!
+//!             .add_tactic(tactics::Identity, 0.2)
+//!             .build(),
+//!         VotingBloc::builder(preferences::Mallows::new(vec![1, 2, 0], 1.0), 45)
+//!             .add_tactic(tactics::Burial::new(vec![0]), 0.8) // Do not vote for the opposition!
+//!             .add_tactic(tactics::Identity, 0.2)
+//!             .build(),
+//!         VotingBloc::builder(preferences::Mallows::new(vec![2, 0, 1], 1.2), 15)
+//!             .add_tactic(tactics::Identity, 0.8)
+//!             .add_tactic(tactics::Compromise::new(vec![0]), 0.2) // Compromise for A (DEM) instead
+//!             .build(),
+//!     ];
+//!     let election = Election::new(candidates, voting_blocks, methods::IRV);
+//!     // run election
+//!     let outcomes = election.run_many(1_000, 0);
+//!     election.display(&outcomes);
+//! }
 //! ```
 pub mod core;
 pub mod methods;
