@@ -1,5 +1,3 @@
-#[cfg(feature = "visualize")]
-use polars::prelude::*;
 use rand::prelude::*;
 use rayon::prelude::*;
 use serde_json::json;
@@ -102,33 +100,6 @@ where
     B: Ballot,
     M: Method<Ballot = B>,
 {
-    /// Visualizes the tabulated outcomes of the elections in a `DataFrame`.
-    ///
-    /// # Panics
-    ///
-    /// This will panic if the dataframe could not be constructed with the given data.
-    #[cfg(feature = "visualize")]
-    pub fn visualize<O: Outcome>(&self, outcomes: Vec<O>) {
-        let tabulated = self.tabulate(outcomes);
-        let df = DataFrame::new(vec![
-            Column::new(
-                "outcome".into(),
-                tabulated
-                    .iter()
-                    .map(|(outcome, _)| format!("{outcome}"))
-                    .collect::<Vec<_>>(),
-            ),
-            Column::new(
-                "count".into(),
-                tabulated
-                    .iter()
-                    .map(|(_, count)| format!("{count}"))
-                    .collect::<Vec<_>>(),
-            ),
-        ])
-        .unwrap();
-        println!("{df}");
-    }
     /// Writes the configuration of the election as JSON.
     fn configuration(&self) -> serde_json::Value {
         json!({
