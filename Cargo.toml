@@ -6,11 +6,10 @@ authors = ["Chance Addis <chance.h.addis@proton.me>"]
 description = "A modular, performant, social choice framework for the simulation, computation, and analysis of strategic voting."
 keywords = [
     "voting",
-    "social choice",
-    "social choice theory",
-    "strategic voting",
-    "computational social choice",
-    "game theory",
+    "social-choice",
+    "simulation",
+    "strategic-voting",
+    "game-theory",
 ]
 categories = ["mathematics", "science", "simulation"]
 readme = "README.md"
