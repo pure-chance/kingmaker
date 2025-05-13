@@ -1,6 +1,7 @@
 use rand::prelude::*;
 use rayon::prelude::*;
 use serde_json::json;
+use thiserror::Error;
 
 use crate::core::{Ballot, Candidate, Method, Outcome, Profile, VotingBloc};
 
@@ -21,17 +22,36 @@ where
     B: Ballot,
     M: Method<Ballot = B>,
 {
+    fn validate(
+        candidates: &[Candidate; N],
+        _voting_blocs: &[VotingBloc<B>; V],
+        _method: &M,
+    ) -> Result<(), ElectionError> {
+        if candidates.iter().any(|c| c.id() >= candidates.len()) {
+            return Err(ElectionError::CandidateIdTooLarge);
+        }
+        let has_duplicates = {
+            let mut seen = std::collections::HashSet::new();
+            candidates.iter().any(|c| !seen.insert(c.id()))
+        };
+        if has_duplicates {
+            return Err(ElectionError::DuplicateCandidateIds);
+        }
+        Ok(())
+    }
+
     /// Creates a new election configuration.
-    pub const fn new(
+    pub fn new(
         candidates: [Candidate; N],
         voting_blocs: [VotingBloc<B>; V],
         method: M,
-    ) -> Self {
-        Self {
+    ) -> Result<Self, ElectionError> {
+        Self::validate(&candidates, &voting_blocs, &method)?;
+        Ok(Self {
             candidates,
             voting_blocs,
             method,
-        }
+        })
     }
     /// Get the candidates up for election.
     pub const fn candidates(&self) -> &[Candidate] {
@@ -132,4 +152,12 @@ where
             "outcomes": outcomes
         })
     }
+}
+
+#[derive(Debug, Error)]
+pub enum ElectionError {
+    #[error("Duplicate candidate ID")]
+    DuplicateCandidateIds,
+    #[error("Candidate ID too large")]
+    CandidateIdTooLarge,
 }

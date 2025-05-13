@@ -41,7 +41,7 @@ name = "kingmaker"
 path = "src/main.rs"
 
 [[bench]]
-name = "preference"
+name = "preferences"
 path = "benches/preferences.rs"
 harness = false
 
@@ -56,6 +56,6 @@ path = "benches/methods.rs"
 harness = false
 
 [[bench]]
-name = "election"
+name = "elections"
 path = "benches/elections.rs"
 harness = false

@@ -14,7 +14,7 @@ pub fn election_benchmarks(c: &mut Criterion) {
         let all = VotingBloc::builder(preferences::Mallows::new(vec![0, 1, 2], 0.0), 100)
             .add_tactic(tactics::Identity, 0.8)
             .build();
-        Election::new(candidates, [all], methods::Plurality)
+        Election::new(candidates, [all], methods::Plurality).unwrap()
     }
 
     group.bench_function("single election", |b| {
