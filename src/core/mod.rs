@@ -18,4 +18,4 @@ pub use tactic::Tactic;
 pub use voting_bloc::VotingBloc;
 
 /// A unique identifier for a candidate
-pub(crate) type Id = u16;
+pub(crate) type Id = usize;

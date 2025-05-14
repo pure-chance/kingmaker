@@ -1,6 +1,4 @@
-use std::collections::HashMap;
-
-use crate::core::{Candidate, Cardinal, Id, Method, Profile, SingleWinner};
+use crate::core::{Candidate, Cardinal, Method, Profile, SingleWinner};
 
 /// A single-winner, cardinal voting method. The two candidates with the highest scores advance to a runoff, where the candidate with the most votes in the runoff wins.
 #[derive(Debug, Clone, serde::Serialize)]
@@ -9,45 +7,51 @@ pub struct Star;
 impl Method for Star {
     type Ballot = Cardinal;
     type Winner = SingleWinner;
+    #[inline]
     fn outcome(&self, candidates: &[Candidate], profile: Profile<Self::Ballot>) -> Self::Winner {
         // score candidates
-        let mut tally: HashMap<Id, usize> = HashMap::with_capacity(profile.len());
-        for ballot in profile.iter() {
-            for (id, score) in &ballot.0 {
-                *tally.entry(*id).or_insert(0) += score;
+        let cumulative_scores = profile.iter().fold(
+            vec![0usize; candidates.len()],
+            |mut cumulative_scores, b| {
+                for (id, score) in b.iter() {
+                    cumulative_scores[*id] += score;
+                }
+                cumulative_scores
+            },
+        );
+        let (mut first_place, mut second_place) = (0, 0);
+        for (i, score) in cumulative_scores.iter().enumerate() {
+            if *score > first_place {
+                second_place = first_place;
+                first_place = i;
+            } else if *score > second_place {
+                second_place = i;
             }
         }
-        // find top 2 candidates
-        let mut sorted_ids: Vec<_> = tally.iter().collect();
-        sorted_ids.sort_by_key(|&(_, score)| score);
-        sorted_ids.reverse();
-        if sorted_ids.len() < 2 {
-            return SingleWinner::None;
-        }
-        let (c1, _) = sorted_ids[0];
-        let (c2, _) = sorted_ids[1];
-        // instant runoff
-        let (c1_tally, c2_tally) =
-            profile
-                .iter()
-                .fold((0, 0), |(c1_tally, c2_tally), preference| {
-                    let score1 = preference.0.get(c1).unwrap();
-                    let score2 = preference.0.get(c2).unwrap();
-                    (
-                        c1_tally + usize::from(score1 > score2),
-                        c2_tally + usize::from(score2 > score1),
-                    )
-                });
-        let winners = match (c1_tally, c2_tally) {
-            (c1_tally, c2_tally) if c1_tally > c2_tally => vec![*c1],
-            (c1_tally, c2_tally) if c2_tally > c1_tally => vec![*c2],
-            (c1_tally, c2_tally) if c1_tally == c2_tally => vec![*c1, *c2],
-            _ => vec![],
-        };
-        match winners.len() {
-            0 => SingleWinner::none(),
-            1 => SingleWinner::win(candidates, winners[0]),
-            _ => SingleWinner::tie(candidates, &winners),
+
+        // instant runoff (tally who has the most wins (higher placements))
+        let (first_tally, second_tally) = profile.iter().fold((0, 0), |(c1, c2), preference| {
+            let first_score = preference.0.get(&first_place).unwrap();
+            let second_score = preference.0.get(&second_place).unwrap();
+            if first_score > second_score {
+                (c1 + 1, c2)
+            } else if second_score > first_score {
+                (c1, c2 + 1)
+            } else {
+                (c1, c2)
+            }
+        });
+        match (first_tally, second_tally) {
+            (first_tally, second_tally) if first_tally > second_tally => {
+                SingleWinner::win(candidates, first_place)
+            }
+            (first_tally, second_tally) if second_tally > first_tally => {
+                SingleWinner::win(candidates, second_place)
+            }
+            (first_tally, second_tally) if first_tally == second_tally => {
+                SingleWinner::tie(candidates, &[first_place, second_place])
+            }
+            _ => SingleWinner::none(),
         }
     }
 }

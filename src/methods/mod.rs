@@ -15,6 +15,16 @@ pub use random_dictator::RandomDictator;
 pub use single_transferable_vote::STV;
 pub use star::Star;
 
+pub(crate) fn find_candidates_with_value<T: PartialEq>(slice: &[T], value: T) -> Vec<usize> {
+    let mut indices = Vec::with_capacity(slice.len()); // preallocate max possible size
+    for (i, x) in slice.iter().enumerate() {
+        if *x == value {
+            indices.push(i);
+        }
+    }
+    indices
+}
+
 #[cfg(test)]
 mod tests {
     use crate::prelude::{methods::*, *};

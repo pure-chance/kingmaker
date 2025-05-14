@@ -1,4 +1,4 @@
-use std::collections::{BTreeMap, HashSet};
+use ordered_float::OrderedFloat;
 
 use crate::core::{Candidate, Id, Method, MultiWinner, Ordinal, Profile};
 
@@ -22,35 +22,62 @@ impl Method for STV {
 
     fn outcome(&self, candidates: &[Candidate], profile: Profile<Self::Ballot>) -> Self::Winner {
         let mut ballots: Vec<Self::Ballot> = profile.into_iter().collect();
-        let mut winners = HashSet::new();
-        let droop_quota = ballots.len() / (self.seats + 1) + 1;
-        let mut tally: BTreeMap<Id, usize> = BTreeMap::new();
+        let mut winners: Vec<Id> = vec![];
+        let droop_quota = OrderedFloat((ballots.len() / (self.seats + 1) + 1) as f64);
+
+        let mut vote_shares = profile.iter().fold(
+            vec![OrderedFloat(0.0); candidates.len()],
+            |mut counts, b| {
+                if let Some(first_place_candidate) = b.first() {
+                    counts[*first_place_candidate] += OrderedFloat(1.0);
+                }
+                counts
+            },
+        );
 
         while winners.len() < self.seats {
-            // count first-choice votes
-            tally.clear();
-            for ballot in &ballots {
-                if let Some(&first_choice) = ballot.0.first() {
-                    *tally.entry(first_choice).or_insert(0) += 1;
-                }
-            }
+            // determine elected candidates (if any)
+            let elected = vote_shares.iter().position(|&votes| votes >= droop_quota);
+            if let Some(winner) = elected {
+                // NOTE: It's fine to have one winner elected at a time, as if there are multiple winners, they will be elected one by one. If the seats fill up, then there needs to be a mechanism to select which candidates will be elected, and that mechanism is built in.
 
-            let elected = tally
-                .iter()
-                .filter(|&(_, &votes)| votes >= droop_quota)
-                .max_by_key(|&(_, &votes)| votes);
-            if let Some((winner, _)) = elected {
-                // add winner to winners set and transfer votes
-                winners.insert(*winner);
-                ballots.iter_mut().for_each(|b| b.0.retain(|c| c != winner));
+                // Add winner to winners set and proportionally transfer surplus votes.
+                winners.push(winner);
+
+                let surplus = vote_shares[winner] - droop_quota;
+                vote_shares[winner] = droop_quota;
+
+                let mut second_place_proportions = vec![0usize; candidates.len()];
+                ballots
+                    .iter()
+                    .filter(|b| b.first() == Some(&winner))
+                    .for_each(|b| {
+                        let second_place = b.get(1);
+                        if let Some(second_place) = second_place {
+                            second_place_proportions[*second_place] += 1;
+                        }
+                    });
+                second_place_proportions
+                    .iter()
+                    .enumerate()
+                    .for_each(|(c, &count)| {
+                        vote_shares[c] += OrderedFloat(count as f64) / surplus;
+                    });
+
+                ballots.retain(|b| b.first() != Some(&winner));
             } else {
-                // remove candidate with fewest votes and transfer votes
-                let (loser, _) = tally.iter().min_by_key(|&(_, &votes)| votes).unwrap();
-                ballots.iter_mut().for_each(|b| b.0.retain(|c| c != loser));
+                // Remove candidate with fewest votes and proportionally transfer votes.
+                let min_votes = vote_shares.iter().min().unwrap();
+                let losers: Vec<usize> = vote_shares
+                    .iter()
+                    .enumerate()
+                    .filter_map(|(id, votes)| (votes == min_votes).then_some(id))
+                    .collect();
+                ballots
+                    .iter_mut()
+                    .for_each(|b| b.0.retain(|c| !losers.contains(c)));
             }
         }
-
-        // NOTE: If there are 2 possible elected candidates for a given round, the last one is elected that round.
 
         MultiWinner::Elected(
             winners

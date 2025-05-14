@@ -1,6 +1,5 @@
-use std::collections::HashMap;
-
 use crate::core::{Candidate, Id, Method, Nominal, Profile, SingleWinner};
+use crate::methods::find_candidates_with_value;
 
 /// A single-winner, nominal voting method. The winner is the candidate(s) with the most approvals.
 #[derive(Debug, Clone, serde::Serialize)]
@@ -10,18 +9,14 @@ impl Method for Approval {
     type Ballot = Nominal;
     type Winner = SingleWinner;
     fn outcome(&self, candidates: &[Candidate], profile: Profile<Self::Ballot>) -> Self::Winner {
-        let mut approval_counts: HashMap<Id, usize> = HashMap::with_capacity(profile.len());
-        (0..profile.len()).for_each(|i| {
-            for candidate in profile[i].iter() {
-                *approval_counts.entry(*candidate).or_insert(0) += 1;
+        let mut approvals = vec![0; candidates.len()];
+        profile.iter().for_each(|ballot| {
+            for id in ballot.iter() {
+                approvals[*id as usize] += 1;
             }
         });
-        let max_count = approval_counts.values().max().unwrap();
-        let winners: Vec<Id> = approval_counts
-            .iter()
-            .filter(|(_, count)| count == &max_count)
-            .map(|(id, _)| *id)
-            .collect();
+        let max_count = approvals.iter().max().unwrap();
+        let winners: Vec<Id> = find_candidates_with_value(&approvals, *max_count);
         match winners.len() {
             0 => SingleWinner::none(),
             1 => SingleWinner::win(candidates, winners[0]),

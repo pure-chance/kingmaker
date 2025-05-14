@@ -1,6 +1,5 @@
-use std::collections::HashMap;
-
-use crate::core::{Candidate, Id, Method, Ordinal, Profile, SingleWinner};
+use crate::core::{Candidate, Method, Ordinal, Profile, SingleWinner};
+use crate::methods::find_candidates_with_value;
 
 /// A single-winner, ranked voting method. The candidate with the most votes (a plurality) wins.
 #[derive(Debug, Clone, serde::Serialize)]
@@ -10,19 +9,17 @@ impl Method for Plurality {
     type Ballot = Ordinal;
     type Winner = SingleWinner;
     fn outcome(&self, candidates: &[Candidate], profile: Profile<Self::Ballot>) -> Self::Winner {
-        let mut tally: HashMap<Id, usize> = HashMap::with_capacity(profile.len());
-        profile
-            .iter()
-            .filter_map(|ballot| ballot.first())
-            .for_each(|candidate| {
-                *tally.entry(*candidate).or_insert(0) += 1;
-            });
-        let max_count = tally.values().max().unwrap();
-        let winners: Vec<Id> = tally
-            .iter()
-            .filter(|(_, count)| *count == max_count)
-            .map(|(candidate, _)| *candidate)
-            .collect();
+        let first_place_votes =
+            profile
+                .iter()
+                .fold(vec![0usize; candidates.len()], |mut counts, b| {
+                    if let Some(first_place_candidate) = b.first() {
+                        counts[*first_place_candidate] += 1;
+                    }
+                    counts
+                });
+        let max_count = first_place_votes.iter().max().unwrap();
+        let winners: Vec<usize> = find_candidates_with_value(&first_place_votes, *max_count);
         match winners.len() {
             0 => SingleWinner::none(),
             1 => SingleWinner::win(candidates, winners[0]),

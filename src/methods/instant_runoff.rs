@@ -1,5 +1,3 @@
-use std::collections::HashMap;
-
 use crate::core::{Candidate, Id, Method, Ordinal, Profile, SingleWinner};
 
 /// A single-winner, ranked voting method. The candidate with the fewest votes is eliminated in each round, and votes for the eliminated candidate are redistributed to the next preference. This process continues until one candidate has a majority.
@@ -13,25 +11,26 @@ impl Method for IRV {
         let majority = profile.len() / 2 + 1;
         let mut remaining_ranking: Vec<Self::Ballot> = profile.iter().cloned().collect();
 
-        let first_place_counts = |profile: &Vec<Self::Ballot>| -> HashMap<Id, usize> {
-            profile.iter().fold(HashMap::new(), |mut map, b| {
-                let first_place_candidate = (*b).first();
-                if first_place_candidate.is_some() {
-                    *map.entry((*b)[0]).or_insert(0) += 1;
-                }
-                map
-            })
+        let first_place_counts = |profile: &Vec<Self::Ballot>| -> Vec<usize> {
+            profile
+                .iter()
+                .fold(vec![0; candidates.len()], |mut fpv, b| {
+                    if let Some(first_place_candidate) = b.first() {
+                        fpv[*first_place_candidate] += 1;
+                    }
+                    fpv
+                })
         };
 
         let mut fpc = first_place_counts(&remaining_ranking);
-        let mut max_first_place_votes: usize = *fpc.values().max().unwrap();
+        let mut max_first_place_votes: usize = *fpc.iter().max().unwrap();
 
         while max_first_place_votes < majority {
-            let min_first_place_votes: usize = *fpc.values().min().unwrap();
+            let min_first_place_votes: usize = *fpc.iter().min().unwrap();
             let losers: Vec<Id> = fpc
                 .iter()
-                .filter(|&(_, lpv)| *lpv == min_first_place_votes)
-                .map(|(id, _)| *id)
+                .enumerate()
+                .filter_map(|(i, x)| (*x == min_first_place_votes).then(|| i))
                 .collect();
 
             // if all candidates have the same number of first-place votes, then break and tie
@@ -39,24 +38,23 @@ impl Method for IRV {
                 break;
             }
 
-            remaining_ranking = remaining_ranking
-                .iter_mut()
-                .filter(|b| !b.is_empty())
-                .map(|b| {
-                    b.retain(|c| !losers.contains(c));
-                    b.clone()
-                })
-                .collect::<Vec<_>>();
+            // reallocate votes
+            remaining_ranking.retain(|b| !b.is_empty());
+            for ballot in &mut remaining_ranking {
+                ballot.retain(|c| !losers.contains(c));
+            }
 
+            // recalculate the standings
             fpc = first_place_counts(&remaining_ranking);
-            max_first_place_votes = *fpc.values().max().unwrap();
+            max_first_place_votes = *fpc.iter().max().unwrap();
         }
 
         let winners: Vec<Id> = fpc
             .iter()
-            .filter(|&(_, fpv)| *fpv == max_first_place_votes)
-            .map(|(id, _)| *id)
+            .enumerate()
+            .filter_map(|(i, x)| (*x == max_first_place_votes).then(|| i))
             .collect();
+
         match winners.len() {
             0 => SingleWinner::none(),
             1 => SingleWinner::win(candidates, winners[0]),
