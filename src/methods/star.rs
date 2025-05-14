@@ -9,7 +9,7 @@ impl Method for Star {
     type Winner = SingleWinner;
     #[inline]
     fn outcome(&self, candidates: &[Candidate], profile: Profile<Self::Ballot>) -> Self::Winner {
-        // score candidates
+        // Score candidates
         let cumulative_scores = profile.iter().fold(
             vec![0usize; candidates.len()],
             |mut cumulative_scores, b| {
@@ -19,17 +19,22 @@ impl Method for Star {
                 cumulative_scores
             },
         );
+
+        let (mut first_place_score, mut second_place_score) = (0, 0);
         let (mut first_place, mut second_place) = (0, 0);
         for (i, score) in cumulative_scores.iter().enumerate() {
-            if *score > first_place {
+            if *score > first_place_score {
+                second_place_score = first_place_score;
                 second_place = first_place;
+                first_place_score = *score;
                 first_place = i;
-            } else if *score > second_place {
+            } else if *score > second_place_score {
+                second_place_score = *score;
                 second_place = i;
             }
         }
 
-        // instant runoff (tally who has the most wins (higher placements))
+        // Instant runoff (tally who has the most wins (higher placements))
         let (first_tally, second_tally) = profile.iter().fold((0, 0), |(c1, c2), preference| {
             let first_score = preference.0.get(&first_place).unwrap();
             let second_score = preference.0.get(&second_place).unwrap();

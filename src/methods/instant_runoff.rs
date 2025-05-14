@@ -11,6 +11,7 @@ impl Method for IRV {
     fn outcome(&self, candidates: &[Candidate], profile: Profile<Self::Ballot>) -> Self::Winner {
         let majority = profile.len() / 2 + 1;
         let mut remaining_ranking: Vec<Self::Ballot> = profile.iter().cloned().collect();
+        let mut remaining_candidates = candidates.len();
 
         let first_place_counts = |profile: &Vec<Self::Ballot>| -> Vec<usize> {
             profile
@@ -27,25 +28,27 @@ impl Method for IRV {
         let mut max_first_place_votes: usize = *fpc.iter().max().unwrap();
 
         while max_first_place_votes < majority {
-            let min_first_place_votes: usize = *fpc.iter().min().unwrap();
+            // Find eliminated candidates.
+            let min_first_place_votes: usize = *fpc.iter().filter(|&&x| x > 0).min().unwrap();
             let losers: Vec<Id> = fpc
                 .iter()
                 .enumerate()
-                .filter_map(|(i, x)| (*x == min_first_place_votes).then(|| i))
+                .filter_map(|(i, &x)| (x == min_first_place_votes && x > 0).then(|| i))
                 .collect();
+            remaining_candidates -= losers.len();
 
-            // if all candidates have the same number of first-place votes, then break and tie
-            if losers.len() == fpc.len() {
+            // If all candidates have the same number of first-place votes, then break and tie.
+            if remaining_candidates == 0 {
                 break;
             }
 
-            // reallocate votes
-            remaining_ranking.retain(|b| !b.is_empty());
+            // Reallocate votes.
             for ballot in &mut remaining_ranking {
                 ballot.retain(|c| !losers.contains(c));
             }
+            remaining_ranking.retain(|b| !b.is_empty());
 
-            // recalculate the standings
+            // Recalculate the standings.
             fpc = first_place_counts(&remaining_ranking);
             max_first_place_votes = *fpc.iter().max().unwrap();
         }

@@ -82,13 +82,13 @@ where
             .collect::<Profile<B>>()
     }
     /// Run a single election with the given configuration
-    pub fn run_once(&self, seed: u64) -> impl Outcome + use<N, V, B, M> {
+    pub fn run_once(&self, seed: u64) -> impl Outcome {
         let mut rng = StdRng::seed_from_u64(seed);
         let profile: Profile<B> = self.vote(&mut rng);
         self.method().outcome(self.candidates(), profile)
     }
     /// Run many elections with the given configuration
-    pub fn run_many(&self, iterations: usize, seed: u64) -> Vec<impl Outcome + use<N, V, B, M>> {
+    pub fn run_many(&self, iterations: usize, seed: u64) -> Vec<impl Outcome> {
         let mut rng = StdRng::seed_from_u64(seed);
         (0..iterations)
             .map(|_| rng.random())

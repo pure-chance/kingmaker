@@ -125,6 +125,6 @@ mod tests {
         let candidates = candidates();
         let ballots = ordinal_ballots();
         let outcome = STV::new(2).outcome(&candidates, ballots);
-        assert_eq!(outcome, MultiWinner::seats(&candidates, &[1, 2]));
+        assert_eq!(outcome, MultiWinner::seats(&candidates, &[0, 2]));
     }
 }

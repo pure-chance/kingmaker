@@ -41,7 +41,7 @@
 //!             .add_tactic(tactics::Compromise::new(vec![0]), 0.2) // Compromise for A (DEM) instead
 //!             .build(),
 //!     ];
-//!     let election = Election::new(candidates, voting_blocks, methods::IRV);
+//!     let election = Election::new(candidates, voting_blocks, methods::IRV).unwrap();
 //!     // run election
 //!     let outcomes = election.run_many(1_000, 0);
 //!     election.display(&outcomes);
