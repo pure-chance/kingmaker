@@ -5,6 +5,7 @@ use crate::core::{Ballot, Tactic};
 pub struct Identity;
 
 impl<B: Ballot> Tactic<B> for Identity {
+    #[inline]
     fn apply(&self, ballot: B) -> B {
         ballot
     }

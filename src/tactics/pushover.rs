@@ -21,6 +21,7 @@ impl Pushover {
 }
 
 impl Tactic<Ordinal> for Pushover {
+    #[inline]
     fn apply(&self, ballot: Ordinal) -> Ordinal {
         let mut pushover_ranking: Vec<Id> = (*ballot).clone();
         pushover_ranking.retain(|c| !self.preferred.contains(c) && !self.pushover.contains(c));

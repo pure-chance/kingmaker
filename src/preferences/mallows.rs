@@ -40,6 +40,7 @@ impl Mallows {
 }
 
 impl Preference<Ordinal> for Mallows {
+    #[inline]
     fn draw(&self, candidates: &[Candidate], rng: &mut StdRng) -> Ordinal {
         let distance = sample_kendall_tau_distance(
             u32::try_from(self.pi_0.len()).expect("pi_0 length too big"),

@@ -8,6 +8,7 @@ pub struct Borda;
 impl Method for Borda {
     type Ballot = Ordinal;
     type Winner = SingleWinner;
+    #[inline]
     fn outcome(&self, candidates: &[Candidate], profile: Profile<Self::Ballot>) -> Self::Winner {
         let ranking_score =
             profile

@@ -40,6 +40,7 @@ impl Default for Impartial {
 }
 
 impl Preference<Cardinal> for Impartial {
+    #[inline]
     fn draw(&self, candidates: &[Candidate], rng: &mut StdRng) -> Cardinal {
         const RANGE: usize = 5;
         Cardinal(

@@ -8,6 +8,7 @@ pub struct Approval;
 impl Method for Approval {
     type Ballot = Nominal;
     type Winner = SingleWinner;
+    #[inline]
     fn outcome(&self, candidates: &[Candidate], profile: Profile<Self::Ballot>) -> Self::Winner {
         let mut approvals = vec![0; candidates.len()];
         profile.iter().for_each(|ballot| {

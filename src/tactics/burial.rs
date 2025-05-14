@@ -14,6 +14,7 @@ impl Burial {
 }
 
 impl Tactic<Ordinal> for Burial {
+    #[inline]
     fn apply(&self, ballot: Ordinal) -> Ordinal {
         let mut ranking: Vec<Id> = (*ballot).clone();
         ranking.retain(|c| !self.burials.contains(c));

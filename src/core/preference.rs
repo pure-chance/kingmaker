@@ -11,6 +11,7 @@ pub trait Preference<B: Ballot>: Send + Sync + Debug {
     /// Draws a ballot from the preference distribution.
     fn draw(&self, candidates: &[Candidate], rng: &mut StdRng) -> B;
     /// Samples a profile from the preference distribution.
+    #[inline]
     fn sample(&self, candidates: &[Candidate], sample_size: usize, rng: &mut StdRng) -> Profile<B> {
         Profile::new((0..sample_size).map(|_| self.draw(candidates, rng)))
     }

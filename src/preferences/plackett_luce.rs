@@ -42,6 +42,7 @@ impl PlackettLuce {
 }
 
 impl Preference<Ordinal> for PlackettLuce {
+    #[inline]
     fn draw(&self, candidates: &[Candidate], rng: &mut StdRng) -> Ordinal {
         let mut weights = self.weights.clone();
         let mut ballot = Vec::with_capacity(candidates.len());

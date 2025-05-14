@@ -19,7 +19,7 @@ impl STV {
 impl Method for STV {
     type Ballot = Ordinal;
     type Winner = MultiWinner;
-
+    #[inline]
     fn outcome(&self, candidates: &[Candidate], profile: Profile<Self::Ballot>) -> Self::Winner {
         let mut ballots: Vec<Self::Ballot> = profile.into_iter().collect();
         let mut winners: Vec<Id> = vec![];

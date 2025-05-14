@@ -8,6 +8,7 @@ pub struct Plurality;
 impl Method for Plurality {
     type Ballot = Ordinal;
     type Winner = SingleWinner;
+    #[inline]
     fn outcome(&self, candidates: &[Candidate], profile: Profile<Self::Ballot>) -> Self::Winner {
         let first_place_votes =
             profile

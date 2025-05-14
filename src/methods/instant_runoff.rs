@@ -7,6 +7,7 @@ pub struct IRV;
 impl Method for IRV {
     type Ballot = Ordinal;
     type Winner = SingleWinner;
+    #[inline]
     fn outcome(&self, candidates: &[Candidate], profile: Profile<Self::Ballot>) -> Self::Winner {
         let majority = profile.len() / 2 + 1;
         let mut remaining_ranking: Vec<Self::Ballot> = profile.iter().cloned().collect();

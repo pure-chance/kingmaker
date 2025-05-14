@@ -14,6 +14,7 @@ impl Compromise {
 }
 
 impl Tactic<Ordinal> for Compromise {
+    #[inline]
     fn apply(&self, ballot: Ordinal) -> Ordinal {
         let mut compromised_ranking: Vec<Id> = (*ballot).clone();
         compromised_ranking.retain(|c| !self.compromises.contains(c));

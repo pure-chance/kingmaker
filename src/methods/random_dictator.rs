@@ -7,6 +7,7 @@ pub struct RandomDictator;
 impl Method for RandomDictator {
     type Ballot = Ordinal;
     type Winner = SingleWinner;
+    #[inline]
     fn outcome(&self, candidates: &[Candidate], profile: Profile<Self::Ballot>) -> Self::Winner {
         if profile.is_empty() {
             return SingleWinner::None;
