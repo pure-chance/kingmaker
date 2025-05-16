@@ -20,7 +20,7 @@ impl Method for Plurality {
                     counts
                 });
         let max_count = first_place_votes.iter().max().unwrap();
-        let winners: Vec<usize> = find_candidates_with_value(&first_place_votes, *max_count);
+        let winners: Vec<usize> = find_candidates_with_value(&first_place_votes, max_count);
         match winners.len() {
             0 => SingleWinner::none(),
             1 => SingleWinner::win(candidates, winners[0]),

@@ -38,12 +38,10 @@ impl Method for Star {
         let (first_tally, second_tally) = profile.iter().fold((0, 0), |(c1, c2), preference| {
             let first_score = preference.0.get(&first_place).unwrap();
             let second_score = preference.0.get(&second_place).unwrap();
-            if first_score > second_score {
-                (c1 + 1, c2)
-            } else if second_score > first_score {
-                (c1, c2 + 1)
-            } else {
-                (c1, c2)
+            match first_score.cmp(second_score) {
+                std::cmp::Ordering::Greater => (c1 + 1, c2),
+                std::cmp::Ordering::Less => (c1, c2 + 1),
+                std::cmp::Ordering::Equal => (c1, c2),
             }
         });
         match (first_tally, second_tally) {

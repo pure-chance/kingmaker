@@ -8,7 +8,9 @@ use serde::Serialize;
 
 use crate::core::Id;
 
-/// A ballot type that can be cast in an election. A ballot is an expression of a voter's preferences. There are three ballot types: `Nominal`, `Ordinal`, and `Cardinal`.
+/// A ballot type that can be cast in an election
+///
+/// A ballot is an expression of a voter's preferences. There are three ballot types: `Nominal`, `Ordinal`, and `Cardinal`.
 pub trait Ballot: Debug + Deref + Send + Sync + Clone + Serialize {}
 
 /// Approval ballot: A set of approved candidates

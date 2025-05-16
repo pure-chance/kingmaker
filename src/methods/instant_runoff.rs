@@ -33,7 +33,7 @@ impl Method for IRV {
             let losers: Vec<Id> = fpc
                 .iter()
                 .enumerate()
-                .filter_map(|(i, &x)| (x == min_first_place_votes && x > 0).then(|| i))
+                .filter_map(|(i, &x)| (x == min_first_place_votes && x > 0).then_some(i))
                 .collect();
             remaining_candidates -= losers.len();
 
@@ -56,7 +56,8 @@ impl Method for IRV {
         let winners: Vec<Id> = fpc
             .iter()
             .enumerate()
-            .filter_map(|(i, x)| (*x == max_first_place_votes).then(|| i))
+            .filter(|(_, &x)| x == max_first_place_votes)
+            .map(|(i, _)| i)
             .collect();
 
         match winners.len() {

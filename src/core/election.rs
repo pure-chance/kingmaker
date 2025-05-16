@@ -22,6 +22,11 @@ where
     B: Ballot,
     M: Method<Ballot = B>,
 {
+    /// Validates the election configuration.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if the election configuration is invalid.
     fn validate(
         candidates: &[Candidate; N],
         _voting_blocs: &[VotingBloc<B>; V],
@@ -40,7 +45,11 @@ where
         Ok(())
     }
 
-    /// Creates a new election configuration.
+    /// Creates a new election configuration
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if the election configuration is invalid.
     pub fn new(
         candidates: [Candidate; N],
         voting_blocs: [VotingBloc<B>; V],
@@ -53,7 +62,7 @@ where
             method,
         })
     }
-    /// Get the candidates up for election.
+    /// Get the candidates up for election
     pub const fn candidates(&self) -> &[Candidate] {
         &self.candidates
     }
@@ -61,18 +70,18 @@ where
     pub const fn voting_blocs(&self) -> &[VotingBloc<B>] {
         &self.voting_blocs
     }
-    /// Get the method used to determine the winner of the election.
+    /// Get the method used to determine the winner of the election
     pub const fn method(&self) -> &M {
         &self.method
     }
-    /// Realizes the preferences of the voters into an honest Profile.
+    /// Realizes the preferences of the voters into an honest Profile
     pub fn realize(&self, rng: &mut StdRng) -> Profile<B> {
         self.voting_blocs()
             .iter()
             .map(|voting_bloc| voting_bloc.realize(self.candidates(), rng))
             .collect::<Profile<B>>()
     }
-    /// Realizes the preferences of the voters and implements strategic voting.
+    /// Realizes the preferences of the voters and implements strategic voting
     ///
     /// This produces a profile of strategic votes, which is what is submitted for tabulation and outcome determination.
     pub fn vote(&self, rng: &mut StdRng) -> Profile<B> {
@@ -97,7 +106,7 @@ where
             .map(|seed| self.run_once(seed))
             .collect()
     }
-    /// Tabulates the outcomes of the elections.
+    /// Tabulates the outcomes of the elections
     pub fn tabulate<O: Outcome>(&self, outcomes: impl IntoIterator<Item = O>) -> Vec<(O, usize)> {
         let mut result: Vec<(O, usize)> = Vec::new();
         for outcome in outcomes {
@@ -108,7 +117,7 @@ where
         }
         result
     }
-    /// Displays the tabulated outcomes of the elections as debug output.
+    /// Displays the tabulated outcomes of the elections as debug output
     pub fn display<O: Outcome>(&self, outcomes: &[O]) {
         let tabulated = self.tabulate(outcomes.iter().cloned());
         println!("{tabulated:?}");
@@ -120,7 +129,7 @@ where
     B: Ballot,
     M: Method<Ballot = B>,
 {
-    /// Writes the configuration of the election as JSON.
+    /// Writes the configuration of the election as JSON
     fn configuration(&self) -> serde_json::Value {
         json!({
             "candidates": self.candidates(),
@@ -143,7 +152,7 @@ where
             .collect::<Vec<_>>()
             .into()
     }
-    /// Writes the configuration and outcomes of the election as JSON.
+    /// Writes the configuration and outcomes of the election as JSON
     pub fn write<O: Outcome>(self, outcomes: Vec<O>) -> serde_json::Value {
         let configuration = self.configuration();
         let outcomes = self.outcomes(outcomes);

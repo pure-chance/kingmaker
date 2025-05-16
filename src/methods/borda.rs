@@ -20,7 +20,7 @@ impl Method for Borda {
                     ranking_score
                 });
         let max_ranking = ranking_score.iter().max().unwrap();
-        let winners: Vec<Id> = find_candidates_with_value(&ranking_score, *max_ranking);
+        let winners: Vec<Id> = find_candidates_with_value(&ranking_score, max_ranking);
         match winners.len() {
             0 => SingleWinner::none(),
             1 => SingleWinner::win(candidates, winners[0]),

@@ -13,11 +13,11 @@ impl Method for Approval {
         let mut approvals = vec![0; candidates.len()];
         profile.iter().for_each(|ballot| {
             for id in ballot.iter() {
-                approvals[*id as usize] += 1;
+                approvals[*id] += 1;
             }
         });
         let max_count = approvals.iter().max().unwrap();
-        let winners: Vec<Id> = find_candidates_with_value(&approvals, *max_count);
+        let winners: Vec<Id> = find_candidates_with_value(&approvals, max_count);
         match winners.len() {
             0 => SingleWinner::none(),
             1 => SingleWinner::win(candidates, winners[0]),
