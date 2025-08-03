@@ -1,7 +1,7 @@
 [package]
 name = "kingmaker"
 version = "0.1.0"
-edition = "2021"
+edition = "2024"
 authors = ["Chance Addis <chance.h.addis@proton.me>"]
 description = "A modular, performant, social choice framework for the simulation, computation, and analysis of strategic voting."
 keywords = [

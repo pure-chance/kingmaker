@@ -56,7 +56,7 @@ impl Method for IRV {
         let winners: Vec<Id> = fpc
             .iter()
             .enumerate()
-            .filter(|(_, &x)| x == max_first_place_votes)
+            .filter(|&(_, &x)| x == max_first_place_votes)
             .map(|(i, _)| i)
             .collect();
 
